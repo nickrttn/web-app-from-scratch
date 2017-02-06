@@ -21,6 +21,12 @@ Discounting that long-run beneficial effect of frameworks and looking at the mor
 - **Portability** A lot of community effort is put into writing modules for frameworks that might not be around in a couple of years, without thinking to abstract the functionality into plain JavaScript modules.
 - **Page load speeds** Adding a framework/library means a defacto increase of asset load times, while potentially blocking the first meaningful paint.
 
+I think the most important argument here is
+
+> You learn the framework, not the language
+
+Learning a single framework might make you a very fast and efficient developer. In that one framework. It will not help you in the long run. If anything, the web has proven it can iterate fast and brutally. Frameworks die or never take off and you will be stuck with it. It also reduces your ability to reason about the language and its features in general. It abstracts hard things away from you. Knowing these things will make you a better developer. They are also scary, at the start. Deal with it.
+
 ### Sources
 
 - [1<sup>st</sup> webdesigner](http://1stwebdesigner.com/web-frameworks/)
