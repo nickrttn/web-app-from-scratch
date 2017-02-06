@@ -4,7 +4,7 @@
   "description": "A collection of experiments for the course Web App from Scratch.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "xo"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nickrttn/web-app-from-scratch/issues"
   },
-  "homepage": "https://github.com/nickrttn/web-app-from-scratch#readme"
+  "homepage": "https://github.com/nickrttn/web-app-from-scratch#readme",
+  "devDependencies": {
+    "xo": "^0.17.1"
+  }
 }
