@@ -6,14 +6,14 @@ While frameworks might not be everyone's cup of tea, they do form and drive the 
 
 Discounting that long-run beneficial effect of frameworks and looking at the more relevant pros and cons for picking one (or not), I came up with the following list.
 
-## Pros
+## Advantages
 
 - **Efficiency** Most frameworks and libraries, when learned, help a developer to write code much faster, because pre-written functions for often repeated tasks exist. Some frameworks add on a standard way to structure your application or components, further increasing the speed and ease at which they can be built and iterated upon.
 - **Security** Frameworks and libraries often have thousands of users. Each and every one of those users is a pair of eyes that looks at the code used in the framework. Together, given time, they will often find the most egregious security errors or vulnerabilities in the framework. If you are lucky, even some of the more arcane ones.
 - **Cost** Most popular frameworks are free as well as open-source. With the added efficiency noted above this can result in a reduction of cost for both agency and client.
 - **Support** As libraries/frameworks have thousands of users, they also have a huge community that is there for you to ask questions. Chances are, someone's had your problem before and knows exactly how to fix it. They might even have already published a package for it on npm. Most decent frameworks also have thorough documentation where you can find at least the API for the library and often tutorials and rationale.
 
-## Cons
+## Disadvantages
 
 - **You learn the framework** This is the most important con. When you have worked with a framework for a couple of years, you might find it very hard to unlearn the practices you've worked so hard to learn when something new comes around. When your company suddenly scales very fast and you need to adapt the framework to be able to handle that, you won't know the language on which it's been built. You just know the framework.
 - **Limitation** It is often hard to modify the way a framework works. Doing so requires you to update your monkey patch for each new version of the framework and will cost significant manpower.
