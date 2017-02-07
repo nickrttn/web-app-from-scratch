@@ -19,4 +19,3 @@
 
 - [Stack Overflow](https://stackoverflow.com/questions/21862054/single-page-application-advantages-and-disadvantages)
 - [UX Stack Exchange](https://ux.stackexchange.com/questions/28737/pros-and-cons-of-a-single-page-site-versus-a-multi-page-site)
--
