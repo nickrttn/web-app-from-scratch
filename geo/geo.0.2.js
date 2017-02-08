@@ -1,3 +1,5 @@
+'use strict';
+
 class Debugger {
 	constructor() {
 		this.customDebugging = false;
