@@ -7,3 +7,5 @@ This repository holds the code for the weekly assignments of Web App from Scratc
 ## This repo uses
 
 - [XO by Sindre Sorhus](https://github.com/sindresorhus/xo)
+
+XO is a wrapper around ESLint, which makes the console output prettier and defines a set of default linting rules. It's used in combination with [sindresorhus/sublimelinter-contrib-xo](https://github.com/sindresorhus/sublimelinter-contrib-xo), which integrates XO into Sublime Text.
