@@ -4,7 +4,8 @@
   "description": "A collection of experiments for the course Web App from Scratch.",
   "main": "index.js",
   "scripts": {
-    "test": "xo"
+    "test": "xo",
+    "deploy": "surge --domain webappfromscratch.surge.sh --project ./spa"
   },
   "repository": {
     "type": "git",
