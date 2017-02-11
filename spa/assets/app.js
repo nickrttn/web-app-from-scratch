@@ -1,5 +1,3 @@
-'use strict';
-
 class Routes {
 	constructor(app) {
 		this.app = app;
@@ -57,6 +55,7 @@ class App {
 }
 
 (() => {
+	'use strict';
 	const app = new App();
 	app.init();
 })();
