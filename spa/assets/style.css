@@ -62,8 +62,7 @@ h5 {
 }
 
 a {
-	color: #222;
-	text-decoration: none;
+	color: hotpink;
 	transition: color 120ms ease-in-out;
 }
 
@@ -73,11 +72,11 @@ a:focus {
 }
 
 a:active {
-	color: #222;
+	color: hotpink;
 }
 
 a:visited {
-	color: #222;
+	color: hotpink;
 }
 
 @media screen and (min-width: 34.375em) {
@@ -140,6 +139,12 @@ nav li {
 
 nav li:last-of-type {
 	margin-right: 0;
+}
+
+nav a,
+nav a:active,
+nav a:visited {
+	color: #222;
 }
 
 article {
