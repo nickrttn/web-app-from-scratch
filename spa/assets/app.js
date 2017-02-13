@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 class Routes {
 	constructor(app) {
 		this.app = app;
