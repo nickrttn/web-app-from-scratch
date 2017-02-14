@@ -1,0 +1,29 @@
+{
+  "name": "endless-art",
+  "version": "1.0.0",
+  "description": "Single page web app with endless art from the Rijksmuseum",
+  "main": "index.js",
+  "scripts": {
+    "test": "xo",
+    "deploy": "surge --domain webappfromscratch.surge.sh --project ./"
+  },
+  "author": "Nick Rutten <hello@nickrttn.me>",
+  "license": "MIT",
+  "url": "git+https://github.com/nickrttn/web-app-from-scratch.git",
+  "devDependencies": {
+    "babel-preset-env": "^1.1.8",
+    "babelify": "^7.3.0",
+    "browser-sync": "^2.18.7",
+    "browserify": "^14.0.0",
+    "exorcist": "^0.4.0",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^2.4.1",
+    "gulp-util": "^3.0.8",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.9.0",
+    "xo": "^0.17.1"
+  },
+  "dependencies": {
+    "routie": "0.0.1"
+  }
+}

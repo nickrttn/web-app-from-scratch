@@ -147,23 +147,21 @@ nav a:visited {
 	color: #222;
 }
 
-article {
-	padding: 10vw;
+#collection {
+	display: flex;
+	flex-flow: row wrap;
 }
 
-article h1 {
-	font-size: 4.22222222em;
-	line-height: 1.06578947;
-	margin-top: 0;
-	margin-bottom: 0.71052632em;
-	hyphens: auto;
+#collection article {
+	flex: 1;
 }
 
-article .subtitle {
-	color: hotpink;
-	text-transform: uppercase;
-	font-size: .8em;
-	letter-spacing: -0.01em;
+#collection article h2 {
+	font-size: 1em;
+}
+
+#collection article img {
+	max-width: 100%;
 }
 
 .visually-hidden {
