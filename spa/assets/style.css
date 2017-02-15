@@ -26,7 +26,7 @@ body > * {
 }
 
 h1, h2, h3, h4 {
-	color: hotpink;
+	color: gainsboro;
 }
 
 h1 {
@@ -62,7 +62,7 @@ h5 {
 }
 
 a {
-	color: hotpink;
+	color: gainsboro;
 	transition: color 120ms ease-in-out;
 }
 
@@ -72,11 +72,11 @@ a:focus {
 }
 
 a:active {
-	color: hotpink;
+	color: gainsboro;
 }
 
 a:visited {
-	color: hotpink;
+	color: gainsboro;
 }
 
 @media screen and (min-width: 34.375em) {
@@ -117,7 +117,7 @@ header {
 }
 
 nav {
-	background-color: hotpink;
+	background-color: gainsboro;
 	position: fixed;
 	bottom: 0;
 	min-height: 3em;
@@ -149,19 +149,29 @@ nav a:visited {
 
 #collection {
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: column nowrap;
 }
 
 #collection article {
-	flex: 1;
+	transition: flex 250ms 200ms linear;
+	padding: 0;
+	position: relative;
 }
 
-#collection article h2 {
-	font-size: 1em;
+#collection article h3 {
+	position: absolute;
+	max-width: 25em;
+	top: 3vw;
+	left: 3vw;
+}
+
+#collection article a {
+	color: white;
 }
 
 #collection article img {
 	max-width: 100%;
+	display: block;
 }
 
 .visually-hidden {

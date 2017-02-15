@@ -1,22 +1,43 @@
+/* eslint-env browser */
+import route from 'riot-route';
+
 class Router {
 	constructor(app) {
 		this.app = app;
+		this.init = this.init.bind(this);
+		this.hasError = false;
 	}
 
 	init() {
-		// This is executed only once on pageload.
-		// It checks if the user already has a hash and navigates them there.
-		if (window.location.hash) {
-			this.app.sections.toggle(window.location.hash);
+		route((route, artwork) => this.navigate(route, artwork));
+		route.start(true);
+	}
+
+	navigate(route, artwork) {
+		if (this.hasError) {
+			this.app.removeError();
 		}
 
-		// Bind an event listener to the window object and listen for hashchanges.
-		// Route if they occur
-		window.addEventListener('hashchange', () => { // eslint-disable-line no-undef
-			const route = window.location.hash; // eslint-disable-line no-undef
-			this.app.sections.toggle(route);
-		});
+		if (route === 'collection') {
+			this.app.collection.requestArtwork();
+		}
+
+		if (artwork) {
+			this.app.collection.requestArtwork(artwork);
+			return;
+		}
+
+		this.app.sections.toggle(route);
 	}
 }
 
 export default Router;
+
+// {
+// 			if (artwork) {
+// 				this.app.sections.requestArtwork(artwork);
+// 				return;
+// 			}
+
+// 			this.app.sections.toggle(route);
+// 		}
