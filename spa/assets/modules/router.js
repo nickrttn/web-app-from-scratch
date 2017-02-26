@@ -14,17 +14,17 @@ class Router {
 	}
 
 	navigate(route, artwork) {
+		// remove errors if we previously rendered any
 		if (this.hasError) {
 			this.app.removeError();
 		}
 
-		if (route === 'collection') {
-			this.app.collection.requestArtwork();
+		if (route === 'collection' && !artwork) {
+			this.app.request.shouldFetchCollection();
 		}
 
-		if (artwork) {
-			this.app.collection.requestArtwork(artwork);
-			return;
+		if (route === 'collection' && artwork) {
+			this.app.request.shouldFetchArtwork(artwork);
 		}
 
 		this.app.sections.toggle(route);

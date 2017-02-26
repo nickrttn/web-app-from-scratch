@@ -1,16 +1,17 @@
 /* eslint-env browser */
-
 import Collection from './collection';
 import Request from './request';
 import Router from './router';
 import Sections from './sections';
+import Scroll from './scroll';
 
 class App {
 	constructor() {
+		this.request = new Request(this);
+		this.scroll = new Scroll(this);
 		this.collection = new Collection(this);
 		this.sections = new Sections(this);
 		this.router = new Router(this);
-		this.request = new Request();
 	}
 
 	init() {

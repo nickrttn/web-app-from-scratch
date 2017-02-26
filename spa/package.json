@@ -24,6 +24,7 @@
     "xo": "^0.17.1"
   },
   "dependencies": {
+    "lodash": "^4.17.4",
     "riot-route": "^3.1.0",
     "routie": "0.0.1"
   }
