@@ -4,6 +4,7 @@ class Collection {
 	constructor(app) {
 		this.app = app;
 		this.apikey = 'JrLJKjKw';
+		this.baseURL = 'https://www.rijksmuseum.nl/api/en/collection';
 		this.collectionPresent = false;
 	}
 
@@ -12,7 +13,7 @@ class Collection {
 			return;
 		}
 
-		const request = artwork ? `https://www.rijksmuseum.nl/api/en/collection/${artwork}?key=${this.apikey}&format=json` : `https://www.rijksmuseum.nl/api/en/collection?key=${this.apikey}&format=json&ps=20`;
+		const request = artwork ? `${this.baseURL}/${artwork}?key=${this.apikey}&format=json` : `${this.baseURL}?key=${this.apikey}&format=json&ps=20`;
 
 		this.app.request.get(request)
 			.then(response => response.json())

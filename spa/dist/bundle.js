@@ -99,6 +99,7 @@ var Collection = function () {
 
 		this.app = app;
 		this.apikey = 'JrLJKjKw';
+		this.baseURL = 'https://www.rijksmuseum.nl/api/en/collection';
 		this.collectionPresent = false;
 	}
 
@@ -111,9 +112,7 @@ var Collection = function () {
 				return;
 			}
 
-			var request = artwork ? 'https://www.rijksmuseum.nl/api/en/collection/' + artwork + '?key=' + this.apikey + '&format=json' : 'https://www.rijksmuseum.nl/api/en/collection?key=' + this.apikey + '&format=json&ps=20';
-
-			console.log('requestArtwork()');
+			var request = artwork ? this.baseURL + '/' + artwork + '?key=' + this.apikey + '&format=json' : this.baseURL + '?key=' + this.apikey + '&format=json&ps=20';
 
 			this.app.request.get(request).then(function (response) {
 				return response.json();
@@ -239,15 +238,6 @@ var Router = function () {
 }();
 
 exports.default = Router;
-
-// {
-// 			if (artwork) {
-// 				this.app.sections.requestArtwork(artwork);
-// 				return;
-// 			}
-
-// 			this.app.sections.toggle(route);
-// 		}
 
 },{"riot-route":8}],6:[function(require,module,exports){
 'use strict';

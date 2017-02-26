@@ -1,5 +1,6 @@
 html {
 	box-sizing: border-box;
+  font-size: calc(100% + 6 * (100vw - 20em) / 1600);
 }
 
 *, *:before, *:after {
@@ -9,7 +10,7 @@ html {
 body {
 	background-color: #111;
 	color: white;
-	font: 400 calc(1em + .75vw)/1.5 'Avenir', sans-serif;
+	font: 400 1em/1.5 'Avenir', sans-serif;
 	font-feature-settings: 'clig', 'calt', 'kern', 'liga';
 	font-variant: common-ligatures;
 
@@ -45,7 +46,7 @@ h2 {
 
 h3 {
 	font-size: 1.61111111em;
-	line-height: 1.86206897;
+	line-height: 1.2;
 	margin-top: 0.93103448em;
 	margin-bottom: 0em;
 }
@@ -64,6 +65,7 @@ h5 {
 a {
 	color: gainsboro;
 	transition: color 120ms ease-in-out;
+	text-decoration: none;
 }
 
 a:hover,
@@ -77,36 +79,6 @@ a:active {
 
 a:visited {
 	color: gainsboro;
-}
-
-@media screen and (min-width: 34.375em) {
-	h1 {
-		font-size: 8em;
-		line-height: 1.125;
-		margin-top: .1875em;
-		margin-bottom: .0375em;
-	}
-
-	h2 {
-		font-size: 4em;
-		line-height: 1.125;
-		margin-top: 0.375em;
-		margin-bottom: 0.375em;
-	}
-
-	h3 {
-		font-size: 2em;
-		line-height: 1.5;
-		margin-top: 0.75em;
-		margin-bottom: 0em;
-	}
-
-	h4, h5 {
-		font-size: 1em;
-		line-height: 1.5;
-		margin-top: 1.5em;
-		margin-bottom: 0em;
-	}
 }
 
 header {
@@ -149,20 +121,16 @@ nav a:visited {
 
 #collection {
 	display: flex;
-	flex-flow: column nowrap;
+	flex-flow: row wrap;
+	padding-bottom: 4rem;
 }
 
 #collection article {
+	flex: 0 calc(50% - 4rem);
+	margin: 2rem;
 	transition: flex 250ms 200ms linear;
 	padding: 0;
 	position: relative;
-}
-
-#collection article h3 {
-	position: absolute;
-	max-width: 25em;
-	top: 3vw;
-	left: 3vw;
 }
 
 #collection article a {

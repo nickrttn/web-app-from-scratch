@@ -32,12 +32,3 @@ class Router {
 }
 
 export default Router;
-
-// {
-// 			if (artwork) {
-// 				this.app.sections.requestArtwork(artwork);
-// 				return;
-// 			}
-
-// 			this.app.sections.toggle(route);
-// 		}
