@@ -11,7 +11,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	'use strict';
 
 	var app = new _app2.default();
-	app.init();
 })(); /* eslint-env browser */
 
 },{"./modules/app":2}],2:[function(require,module,exports){
@@ -52,19 +51,18 @@ var App = function () {
 	function App() {
 		_classCallCheck(this, App);
 
+		this.sections = new _sections2.default(this);
 		this.request = new _request2.default(this);
 		this.scroll = new _scroll2.default(this);
 		this.collection = new _collection2.default(this);
-		this.sections = new _sections2.default(this);
 		this.router = new _router2.default(this);
+
+		// if (navigator.serviceWorker) {
+		// 	navigator.serviceWorker.register('../service-worker.js');
+		// }
 	}
 
 	_createClass(App, [{
-		key: 'init',
-		value: function init() {
-			this.router.init();
-		}
-	}, {
 		key: 'handleError',
 		value: function handleError(error) {
 			var body = document.querySelector('body');
@@ -110,25 +108,27 @@ var Collection = function () {
 	}
 
 	_createClass(Collection, [{
-		key: 'renderCollection',
-		value: function renderCollection(data) {
+		key: 'createCollectionNodes',
+		value: function createCollectionNodes(data) {
 			var collection = data.artObjects;
 			var section = this.app.sections.sections.find(function (section) {
 				return section.id === 'collection';
 			});
 			var placeholder = '/assets/images/placeholder.jpg';
 
-			// This might be the most horrible solution imaginable to missing data.
-			// It needs a more defensive fallback that will render always as well
-			// as deal with contingencies.
+			// Insert all artworks into the collection section
 			this.renderTemplate(section, collection.reduce(function (allArt, artwork) {
-				var allPresent = artwork.objectNumber && artwork.longTitle && artwork.headerImage && artwork.title;
-				return allPresent ? allArt + ('\n\t\t\t\t<article data-object="' + artwork.objectNumber + '">\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h3><a href="#collection/' + artwork.objectNumber + '">' + artwork.title + '</a></h3>\n\t\t\t\t</article>\n\t\t\t') : '';
-			}, ''));
+				return allArt + ('\n\t\t\t\t<article>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h3><a href="#collection/' + artwork.objectNumber + '">' + artwork.title + '</a></h3>\n\t\t\t\t</article>');
+			}, ''), 'beforeend');
+
+			// Insert an article tag after the collection section to render individual artwork in later.
+			this.renderTemplate(section, collection.reduce(function (allArt, artwork) {
+				return allArt + ('<article class="visually-hidden" data-object="' + artwork.objectNumber + '">\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h2><a href="#collection/' + artwork.objectNumber + '">' + artwork.title + '</a></h2>\n\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span> Back to collection</a>\n\t\t\t</article>');
+			}, ''), 'afterend');
 		}
 	}, {
-		key: 'renderArtwork',
-		value: function renderArtwork(artwork) {
+		key: 'createArtworkNode',
+		value: function createArtworkNode(artwork) {
 			var object = artwork.artObject;
 
 			// Select the right article
@@ -137,7 +137,7 @@ var Collection = function () {
 			this.closeMoreInformation();
 
 			// Fall back to the regular description, which might be Dutch
-			this.renderTemplate(article, '\n\t\t\t<section class="more-information">\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t\t</section>\n\t\t');
+			this.renderTemplate(article, '\n\t\t\t<section class="more-information">\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t\t</section>\n\t\t', 'beforeend');
 		}
 	}, {
 		key: 'renderImage',
@@ -152,8 +152,8 @@ var Collection = function () {
 		}
 	}, {
 		key: 'renderTemplate',
-		value: function renderTemplate(element, template) {
-			element.insertAdjacentHTML('beforeend', template);
+		value: function renderTemplate(element, template, insert) {
+			element.insertAdjacentHTML(insert, template);
 		}
 	}, {
 		key: 'closeMoreInformation',
@@ -224,7 +224,7 @@ var Request = function () {
 			var URL = this.baseURL + '?key=' + this.apikey + '&format=json&ps=10&p=' + this.page;
 
 			this.get(URL).then(function (data) {
-				_this.app.collection.renderCollection(data);
+				_this.app.collection.createCollectionNodes(data);
 				_this.fetching = false;
 				return data;
 			}).then(function (data) {
@@ -239,11 +239,18 @@ var Request = function () {
 	}, {
 		key: 'fetchImages',
 		value: function fetchImages(data) {
-			var collection = data.artObjects;
+			var collection = data.artObjects.filter(function (object) {
+				return object.hasImage;
+			});
+
+			console.log(collection);
+
+			// Pass the collection data on to the web worker
 			this.worker.postMessage(collection);
 
-			// Listen for a message event and pass it on to the Collection class
+			// Listen for a message event from the worker and pass it on to the Collection class
 			this.worker.onmessage = function (event) {
+				// eslint-disable-line space-before-function-paren
 				this.app.collection.renderImage(event.data);
 			}.bind(this);
 		}
@@ -266,16 +273,16 @@ var Request = function () {
 			var _this2 = this;
 
 			// Did we request this information before?
-			var moreInformation = document.querySelector('#' + artwork + ' .more-information');
-			if (moreInformation) {
+			var article = document.querySelector('[data-object="' + artwork.objectNumber + '"]');
+			if (article) {
 				this.closeMoreInformation();
-				moreInformation.style.display = 'block';
+				article.classList.remove = 'visually-hidden';
 				return;
 			}
 
 			var URL = this.baseURL + '/' + artwork + '?key=' + this.apikey + '&format=json';
 			this.get(URL).then(function (data) {
-				return _this2.app.collection.renderArtwork(data);
+				return _this2.app.collection.createArtworkNode(data);
 			}).catch(function (err) {
 				return _this2.app.handleError(err);
 			});
@@ -307,24 +314,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Router = function () {
 	function Router(app) {
+		var _this = this;
+
 		_classCallCheck(this, Router);
 
 		this.app = app;
-		this.init = this.init.bind(this);
 		this.hasError = false;
+
+		(0, _riotRoute2.default)(function (route, artwork) {
+			return _this.navigate(route, artwork);
+		});
+		_riotRoute2.default.start(true);
 	}
 
 	_createClass(Router, [{
-		key: 'init',
-		value: function init() {
-			var _this = this;
-
-			(0, _riotRoute2.default)(function (route, artwork) {
-				return _this.navigate(route, artwork);
-			});
-			_riotRoute2.default.start(true);
-		}
-	}, {
 		key: 'navigate',
 		value: function navigate(route, artwork) {
 			// remove errors if we previously rendered any
@@ -340,7 +343,7 @@ var Router = function () {
 				this.app.request.shouldFetchArtwork(artwork);
 			}
 
-			this.app.sections.toggle(route);
+			this.app.sections.toggle(route, artwork);
 		}
 	}]);
 
@@ -429,12 +432,31 @@ var Sections = function () {
 
 	_createClass(Sections, [{
 		key: 'toggle',
-		value: function toggle(route) {
-			if (!route) return;
+		value: function toggle(route, artwork) {
+			if (!route) return; // eslint-disable-line curly
 
+			if (artwork) {
+				this.toggleArtwork(artwork);
+				return;
+			}
+
+			this.toggleSection(route);
+		}
+	}, {
+		key: 'toggleSection',
+		value: function toggleSection(route) {
 			this.sections.forEach(function (section) {
 				return route.includes(section.id) ? section.classList.remove('visually-hidden') : section.classList.add('visually-hidden');
 			});
+		}
+	}, {
+		key: 'toggleArtwork',
+		value: function toggleArtwork(artwork) {
+			this.sections.forEach(function (section) {
+				return section.classList.add('visually-hidden');
+			});
+			var article = document.querySelector('[data-object="' + artwork + '"]');
+			article.classList.remove('visually-hidden');
 		}
 	}]);
 

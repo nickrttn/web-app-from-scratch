@@ -13,26 +13,31 @@ class Collection {
 		);
 	}
 
-	renderCollection(data) {
+	createCollectionNodes(data) {
 		const collection = data.artObjects;
 		const section = this.app.sections.sections.find(section => section.id === 'collection');
 		const placeholder = '/assets/images/placeholder.jpg';
 
-		// This might be the most horrible solution imaginable to missing data.
-		// It needs a more defensive fallback that will render always as well
-		// as deal with contingencies.
+		// Insert all artworks into the collection section
 		this.renderTemplate(section, collection.reduce((allArt, artwork) => {
-			const allPresent = artwork.objectNumber && artwork.longTitle && artwork.headerImage && artwork.title;
-			return allPresent ? allArt + `
-				<article data-object="${artwork.objectNumber}">
+			return allArt + `
+				<article>
 					<img class="blur" src="${placeholder}" alt="${artwork.longTitle}" data-guid="${artwork.headerImage.guid}" />
 					<h3><a href="#collection/${artwork.objectNumber}">${artwork.title}</a></h3>
-				</article>
-			` : '';
-		}, ''));
+				</article>`;
+		}, ''), 'beforeend');
+
+		// Insert an article tag after the collection section to render individual artwork in later.
+		this.renderTemplate(section, collection.reduce((allArt, artwork) => {
+			return allArt + `<article class="visually-hidden" data-object="${artwork.objectNumber}">
+					<img class="blur" src="${placeholder}" alt="${artwork.longTitle}" data-guid="${artwork.headerImage.guid}" />
+					<h2><a href="#collection/${artwork.objectNumber}">${artwork.title}</a></h2>
+					<a href="#collection" class="close"><span>&times;</span> Back to collection</a>
+			</article>`;
+		}, ''), 'afterend');
 	}
 
-	renderArtwork(artwork) {
+	createArtworkNode(artwork) {
 		const object = artwork.artObject;
 
 		// Select the right article
@@ -45,7 +50,7 @@ class Collection {
 			<section class="more-information">
 				<p>${object.label.description || object.description}</p>
 			</section>
-		`);
+		`, 'beforeend');
 	}
 
 	renderImage(data) {
@@ -58,8 +63,8 @@ class Collection {
 		});
 	}
 
-	renderTemplate(element, template) {
-		element.insertAdjacentHTML('beforeend', template);
+	renderTemplate(element, template, insert) {
+		element.insertAdjacentHTML(insert, template);
 	}
 
 	closeMoreInformation() {

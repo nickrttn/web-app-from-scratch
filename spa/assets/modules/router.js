@@ -4,11 +4,8 @@ import route from 'riot-route';
 class Router {
 	constructor(app) {
 		this.app = app;
-		this.init = this.init.bind(this);
 		this.hasError = false;
-	}
 
-	init() {
 		route((route, artwork) => this.navigate(route, artwork));
 		route.start(true);
 	}
@@ -27,7 +24,7 @@ class Router {
 			this.app.request.shouldFetchArtwork(artwork);
 		}
 
-		this.app.sections.toggle(route);
+		this.app.sections.toggle(route, artwork);
 	}
 }
 

@@ -7,15 +7,15 @@ import Scroll from './scroll';
 
 class App {
 	constructor() {
+		this.sections = new Sections(this);
 		this.request = new Request(this);
 		this.scroll = new Scroll(this);
 		this.collection = new Collection(this);
-		this.sections = new Sections(this);
 		this.router = new Router(this);
-	}
 
-	init() {
-		this.router.init();
+		// if (navigator.serviceWorker) {
+		// 	navigator.serviceWorker.register('../service-worker.js');
+		// }
 	}
 
 	handleError(error) {

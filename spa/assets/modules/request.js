@@ -31,7 +31,7 @@ class Request {
 
 		this.get(URL)
 			.then(data => {
-				this.app.collection.renderCollection(data);
+				this.app.collection.createCollectionNodes(data);
 				this.fetching = false;
 				return data;
 			})
@@ -43,11 +43,15 @@ class Request {
 	}
 
 	fetchImages(data) {
-		const collection = data.artObjects;
+		const collection = data.artObjects.filter(object => object.hasImage);
+
+		console.log(collection);
+
+		// Pass the collection data on to the web worker
 		this.worker.postMessage(collection);
 
-		// Listen for a message event and pass it on to the Collection class
-		this.worker.onmessage = function(event) {
+		// Listen for a message event from the worker and pass it on to the Collection class
+		this.worker.onmessage = function(event) { // eslint-disable-line space-before-function-paren
 			this.app.collection.renderImage(event.data);
 		}.bind(this);
 	}
@@ -66,16 +70,16 @@ class Request {
 
 	fetchArtwork(artwork) {
 		// Did we request this information before?
-		const moreInformation = document.querySelector(`#${artwork} .more-information`);
-		if (moreInformation) {
+		const article = document.querySelector(`[data-object="${artwork.objectNumber}"]`);
+		if (article) {
 			this.closeMoreInformation();
-			moreInformation.style.display = 'block';
+			article.classList.remove = 'visually-hidden';
 			return;
 		}
 
 		const URL = `${this.baseURL}/${artwork}?key=${this.apikey}&format=json`;
 		this.get(URL)
-			.then(data => this.app.collection.renderArtwork(data))
+			.then(data => this.app.collection.createArtworkNode(data))
 			.catch(err => this.app.handleError(err));
 	}
 }
