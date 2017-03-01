@@ -7,7 +7,7 @@ class Collection {
 
 		this.app.scroll.listen(
 			this.collectionNode,
-			this.app.request.shouldFetchCollection,
+			this.app.request.fetchCollection,
 			this.collectionNode.getBoundingClientRect(),
 			(window.innerHeight / 2)
 		);
@@ -21,7 +21,7 @@ class Collection {
 			return allArt + `
 				<article>
 					<img class="blur" src="${placeholder}" alt="${artwork.longTitle}" data-guid="${artwork.headerImage.guid}" />
-					<h3><a href="#collection/${artwork.objectNumber}">${artwork.title}</a></h3>
+					<h3><a href="#collection/${artwork.objectNumber.replace(/\./g, '')}">${artwork.title}</a></h3>
 				</article>`;
 		}, ''), 'beforeend');
 

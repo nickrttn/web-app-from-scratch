@@ -5,7 +5,7 @@ class Scroll {
 	constructor() {
 		this.listen = this.listen.bind(this);
 		this.trigger = debounce(this.trigger.bind(this), 250, {
-			leading: true, trailing: false, maxWait: 250
+			leading: false, trailing: true, maxWait: 250
 		});
 	}
 

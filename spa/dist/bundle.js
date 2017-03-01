@@ -107,19 +107,40 @@ var Article = function () {
 		value: function render(element, collection) {
 			var placeholder = '/assets/images/placeholder.jpg';
 
+			var objects = collection;
+
+			objects.forEach(function (artwork) {
+				artwork.objectNumber = artwork.objectNumber.replace(/\./g, '');
+			});
+
+			var articles = objects.filter(function (artwork) {
+				return !document.querySelector('[data-object=' + artwork.objectNumber + ']');
+			});
+
 			// Insert an article tag after the collection section to render individual artwork in later.
-			this.renderTemplate(element, collection.reduce(function (allArt, artwork) {
-				return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + artwork.objectNumber + '">\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h2>' + artwork.longTitle + '</h2>\n\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span> Back to collection</a>\n\t\t\t</article>');
+			this.renderTemplate(element, articles.reduce(function (allArt, artwork) {
+				return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + artwork.objectNumber + '">\n\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span> Back to collection</a>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.webImage.guid + '" />\n\t\t\t\t\t<h2>' + artwork.title + '</h2>\n\t\t\t</article>');
 			}, ''), 'beforeend');
 
 			return collection;
+		}
+	}, {
+		key: 'append',
+		value: function append(data) {
+			var object = data.artObject;
+			var article = document.querySelector('[data-object="' + object.objectNumber + '"]');
+
+			this.renderTemplate(article, '<p>' + (object.label.description || object.description) + '</p>', 'beforeend');
+
+			article.dataset.fetched = 'true';
+
+			return data;
 		}
 	}, {
 		key: 'replaceImage',
 		value: function replaceImage(data) {
 			var image = document.querySelector('#articles [data-guid="' + data.guid + '"]');
 			image.classList.remove('blur');
-			image.classList.add('no-blur');
 			image.src = data.src;
 		}
 	}, {
@@ -156,7 +177,7 @@ var Collection = function () {
 			return section.id === 'collection';
 		});
 
-		this.app.scroll.listen(this.collectionNode, this.app.request.shouldFetchCollection, this.collectionNode.getBoundingClientRect(), window.innerHeight / 2);
+		this.app.scroll.listen(this.collectionNode, this.app.request.fetchCollection, this.collectionNode.getBoundingClientRect(), window.innerHeight / 2);
 	}
 
 	_createClass(Collection, [{
@@ -166,7 +187,7 @@ var Collection = function () {
 
 			// Insert all artworks into the collection section
 			this.renderTemplate(this.collectionNode, collection.reduce(function (allArt, artwork) {
-				return allArt + ('\n\t\t\t\t<article>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h3><a href="#collection/' + artwork.objectNumber + '">' + artwork.title + '</a></h3>\n\t\t\t\t</article>');
+				return allArt + ('\n\t\t\t\t<article>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h3><a href="#collection/' + artwork.objectNumber.replace(/\./g, '') + '">' + artwork.title + '</a></h3>\n\t\t\t\t</article>');
 			}, ''), 'beforeend');
 
 			return collection;
@@ -241,15 +262,13 @@ var Request = function () {
 	}, {
 		key: 'shouldFetchCollection',
 		value: function shouldFetchCollection() {
-			if (!this.fetching) {
-				this.fetchCollection();
-			}
+			if (!(this.page > 1)) this.fetchCollection(); // eslint-disable-line curly
 		}
 	}, {
 		key: 'shouldFetchArtwork',
 		value: function shouldFetchArtwork(artwork) {
 			// Did we request this information before?
-			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
+			var article = document.querySelector('#articles [data-object="' + artwork.replace(/\./g, '') + '"]');
 
 			if (article && article.dataset.fetched === 'false') {
 				this.fetchArtwork(artwork);
@@ -263,15 +282,18 @@ var Request = function () {
 		value: function fetchCollection() {
 			var _this = this;
 
+			if (this.fetching) return; // eslint-disable-line curly
 			var URL = this.baseURL + '?key=' + this.apikey + '&format=json&ps=10&p=' + this.page;
 
 			this.get(URL).then(function (response) {
 				return _this.filterCollection(response);
 			}).then(function (result) {
 				return _this.app.collection.render(result);
-			})
-			// .then(data => Article.render(this.app.sections.sections.find(section => section.id === 'articles'), data))
-			.then(function (collection) {
+			}).then(function (data) {
+				return _article2.default.render(_this.app.sections.sections.find(function (section) {
+					return section.id === 'articles';
+				}), data);
+			}).then(function (collection) {
 				return _this.fetchImages(collection);
 			}).then(function (arr) {
 				return _this.app.collection.renderImages(arr);
@@ -292,8 +314,15 @@ var Request = function () {
 
 			var URL = this.baseURL + '/' + artwork + '?key=' + this.apikey + '&format=json';
 			this.get(URL).then(function (data) {
+				return _article2.default.append(data);
+			}).then(function (data) {
 				return _this2.fetchImages(data);
-			}).catch(function (err) {
+			}).then(function (image) {
+				return _article2.default.replaceImage(image);
+			}).then(function () {
+				_this2.fetching = false;
+			}) // eslint-disable-line brace-style
+			.catch(function (err) {
 				return _this2.app.handleError(err);
 			});
 		}
@@ -317,7 +346,7 @@ var Request = function () {
 		value: function filterCollection(data) {
 			// Only display objects that have images as well as header images
 			return data.artObjects.filter(function (object) {
-				return object.headerImage && object.headerImage.guid && object.hasImage;
+				return object.hasImage && object.headerImage && object.webImage;
 			});
 		}
 	}]);
@@ -412,7 +441,7 @@ var Scroll = function () {
 
 		this.listen = this.listen.bind(this);
 		this.trigger = (0, _debounce3.default)(this.trigger.bind(this), 250, {
-			leading: true, trailing: false, maxWait: 250
+			leading: false, trailing: true, maxWait: 250
 		});
 	}
 
