@@ -125,6 +125,11 @@ nav a:visited {
 	padding-bottom: 4rem;
 }
 
+#collection h2 {
+	flex: 0 100%;
+	margin: 4rem 2rem 0;
+}
+
 #collection article {
 	flex: 0 calc(50% - 4rem);
 	margin: 2rem;
@@ -148,6 +153,7 @@ nav a:visited {
 #collection article img {
 	max-width: 100%;
 	display: block;
+	transition: all 120ms ease-in-out;
 }
 
 .visually-hidden {
@@ -163,11 +169,4 @@ nav a:visited {
 
 .blur {
 	filter: blur(.25em);
-	transition: all 120ms ease-in-out;
-	transform: scale(1.05);
-}
-
-.no-blur {
-	filter: blur(0);
-	transform: scale(1);
 }

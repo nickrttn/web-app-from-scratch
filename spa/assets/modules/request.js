@@ -1,4 +1,5 @@
 /* eslint-env browser */
+import Article from './article';
 
 class Request {
 	constructor(app) {
@@ -26,61 +27,56 @@ class Request {
 		}
 	}
 
+	shouldFetchArtwork(artwork) {
+		// Did we request this information before?
+		const article = document.querySelector(`#articles [data-object="${artwork}"]`);
+
+		if (article && article.dataset.fetched === 'false') {
+			this.fetchArtwork(artwork);
+			return;
+		}
+
+		return;
+	}
+
 	fetchCollection() {
 		const URL = `${this.baseURL}?key=${this.apikey}&format=json&ps=10&p=${this.page}`;
 
 		this.get(URL)
-			.then(data => {
-				this.app.collection.createCollectionNodes(data);
-				this.fetching = false;
-				return data;
-			})
-			.then(data => this.fetchImages(data))
+			.then(response => this.filterCollection(response))
+			.then(result => this.app.collection.render(result))
+			// .then(data => Article.render(this.app.sections.sections.find(section => section.id === 'articles'), data))
+			.then(collection => this.fetchImages(collection))
+			.then(arr => this.app.collection.renderImages(arr))
+			.then(() => { this.fetching = false; }) // eslint-disable-line brace-style
 			.catch(err => this.app.handleError(err));
 
 		// Next time this function is called, request the next page.
 		this.page += 1;
 	}
 
-	fetchImages(data) {
-		const collection = data.artObjects.filter(object => object.hasImage);
-
-		console.log(collection);
-
-		// Pass the collection data on to the web worker
-		this.worker.postMessage(collection);
-
-		// Listen for a message event from the worker and pass it on to the Collection class
-		this.worker.onmessage = function(event) { // eslint-disable-line space-before-function-paren
-			this.app.collection.renderImage(event.data);
-		}.bind(this);
-	}
-
-	shouldFetchArtwork(artwork) {
-		// Did we request this information before?
-		const moreInformation = document.querySelector(`#${artwork} .more-information`);
-		if (moreInformation) {
-			this.app.collection.closeMoreInformation();
-			moreInformation.style.display = 'block';
-			return;
-		}
-
-		this.fetchArtwork(artwork);
-	}
-
 	fetchArtwork(artwork) {
-		// Did we request this information before?
-		const article = document.querySelector(`[data-object="${artwork.objectNumber}"]`);
-		if (article) {
-			this.closeMoreInformation();
-			article.classList.remove = 'visually-hidden';
-			return;
-		}
-
 		const URL = `${this.baseURL}/${artwork}?key=${this.apikey}&format=json`;
 		this.get(URL)
-			.then(data => this.app.collection.createArtworkNode(data))
+			.then(data => this.fetchImages(data))
 			.catch(err => this.app.handleError(err));
+	}
+
+	fetchImages(data) {
+		// Pass the collection data on to the web worker
+		this.worker.postMessage(data);
+
+		return new Promise(resolve => {
+			// Listen for a message event from the worker and set blob with its data.
+			this.worker.onmessage = event => {
+				resolve(event.data);
+			};
+		});
+	}
+
+	filterCollection(data) {
+		// Only display objects that have images as well as header images
+		return data.artObjects.filter(object => (object.headerImage && object.headerImage.guid) && object.hasImage);
 	}
 }
 

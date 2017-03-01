@@ -11,6 +11,7 @@
   "license": "MIT",
   "url": "git+https://github.com/nickrttn/web-app-from-scratch.git",
   "devDependencies": {
+    "babel-plugin-lodash": "^3.2.11",
     "babel-preset-env": "^1.1.8",
     "babelify": "^7.3.0",
     "browser-sync": "^2.18.7",

@@ -1,17 +1,17 @@
 /* eslint-env browser, worker */
-onmessage = function (event) {
+onmessage = event => {
 	const collection = event.data;
-	collection.forEach(object => {
-		// fetch the image
+
+	const fetches = collection.map(object => new Promise(resolve =>
 		fetch(object.headerImage.url)
 			.then(response => response.blob())
-			.then(blob => postMessage({
+			.then(blob => ({
 				guid: object.headerImage.guid,
 				src: URL.createObjectURL(blob)
 			}))
-			.catch(err => postMessage({
-				guid: object.headerImage.guid,
-				error: err
-			}));
-	});
+			.then(obj => resolve(obj))
+	));
+
+	Promise.all(fetches)
+		.then(images => postMessage(images));
 };

@@ -15,7 +15,7 @@ var bundler = watchify(browserify('./assets/app.js', watchify.args));
 
 // Babel transform
 bundler.transform(babelify.configure({
-	sourceMapRelative: 'assets'
+	sourceMapRelative: 'assets',
 }));
 
 // On updates recompile

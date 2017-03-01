@@ -20,7 +20,8 @@ class Router {
 			this.app.request.shouldFetchCollection();
 		}
 
-		if (route === 'collection' && artwork) {
+		if (artwork) {
+			this.app.sections.toggle('articles', artwork);
 			this.app.request.shouldFetchArtwork(artwork);
 		}
 

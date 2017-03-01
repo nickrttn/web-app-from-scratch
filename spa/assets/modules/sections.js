@@ -10,6 +10,9 @@ class Sections {
 			}
 			return element;
 		});
+
+		// The articles section is not in the navigation but I need it in the sections Array regardlessly.
+		this.sections.push(document.querySelector('#articles'));
 	}
 
 	toggle(route, artwork) {
@@ -25,14 +28,23 @@ class Sections {
 
 	toggleSection(route) {
 		this.sections.forEach(section => route.includes(section.id) ?
-				section.classList.remove('visually-hidden') :
-				section.classList.add('visually-hidden'));
+			section.classList.remove('visually-hidden') :
+			section.classList.add('visually-hidden'));
 	}
 
 	toggleArtwork(artwork) {
-		this.sections.forEach(section => section.classList.add('visually-hidden'));
-		const article = document.querySelector(`[data-object="${artwork}"]`);
-		article.classList.remove('visually-hidden');
+		const articlesSection = this.sections.find(section => section.id === 'articles');
+		const articles = articlesSection.querySelectorAll('article');
+
+		articles.forEach(article => article.dataset.object === artwork ?
+			article.classList.remove('visually-hidden') :
+			article.classList.add('visually-hidden')
+		);
+
+		// Toggle the articles section
+		this.sections.forEach(section => section.id === 'articles' ?
+			section.classList.remove('visually-hidden') :
+			section.classList.add('visually-hidden'));
 	}
 }
 
