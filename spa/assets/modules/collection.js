@@ -12,7 +12,6 @@ class Collection extends Render {
 		this.app.scroll.listen(
 			this.collectionNode,
 			this.app.request.fetchCollection,
-			this.collectionNode.getBoundingClientRect(),
 			(window.innerHeight / 2)
 		);
 	}

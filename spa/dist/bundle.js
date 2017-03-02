@@ -218,7 +218,7 @@ var Collection = function (_Render) {
 			return section.id === 'collection';
 		});
 
-		_this.app.scroll.listen(_this.collectionNode, _this.app.request.fetchCollection, _this.collectionNode.getBoundingClientRect(), window.innerHeight / 2);
+		_this.app.scroll.listen(_this.collectionNode, _this.app.request.fetchCollection, window.innerHeight / 2);
 		return _this;
 	}
 
@@ -654,10 +654,10 @@ var Scroll = function () {
 
 	_createClass(Scroll, [{
 		key: 'listen',
-		value: function listen(element, callback, bounds) {
+		value: function listen(element, callback) {
 			var _this = this;
 
-			var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+			var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
 			element.addEventListener('wheel', function () {
 				_this.trigger(callback, element, offset);

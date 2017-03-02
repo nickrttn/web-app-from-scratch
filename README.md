@@ -17,10 +17,17 @@ This application is:
 
 ## Wishlist
 
-- Better performance
+- Better performance.
 - More filters and sorting (not hard to implement, just takes time).
 - Nicer design for the detail page.
 - Service worker for API request caching.
+
+## Sources
+
+- [Rijksmuseum API](https://rijksmuseum.github.io)
+- [MDN](https://developer.mozilla.org/)
+- [Stack Overflow](https://stackoverflow.com)
+- Fronteers #js (for a little help on nested Promises combined w/ Web Workers, thanks guys!)
 
 ## This repo uses
 

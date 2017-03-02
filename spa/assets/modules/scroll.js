@@ -9,7 +9,7 @@ class Scroll {
 		});
 	}
 
-	listen(element, callback, bounds, offset = 0) {
+	listen(element, callback, offset = 0) {
 		element.addEventListener('wheel', () => {
 			this.trigger(callback, element, offset);
 		}, {passive: true});
