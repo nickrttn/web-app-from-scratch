@@ -30,14 +30,12 @@ class Filter {
 
 	apply(event) {
 		const articles = Array.from(document.querySelectorAll('#collection article'));
-		if (event.target.value !== '') {
-			articles.forEach(article => console.log(article.dataset));
-			const articlesToHide = articles.filter(article => article.dataset.artist !== event.target.value);
-			articlesToHide.forEach(article => article.classList.add('visually-hidden'));
-			return;
-		}
-
 		articles.forEach(article => article.classList.remove('visually-hidden'));
+
+		if (event.target.value === '') return; // eslint-disable-line curly
+
+		const articlesToHide = articles.filter(article => article.dataset.artist !== event.target.value);
+		articlesToHide.forEach(article => article.classList.add('visually-hidden'));
 	}
 }
 

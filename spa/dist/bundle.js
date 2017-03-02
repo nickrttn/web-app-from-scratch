@@ -315,21 +315,17 @@ var Filter = function () {
 		key: 'apply',
 		value: function apply(event) {
 			var articles = Array.from(document.querySelectorAll('#collection article'));
-			if (event.target.value !== '') {
-				articles.forEach(function (article) {
-					return console.log(article.dataset);
-				});
-				var articlesToHide = articles.filter(function (article) {
-					return article.dataset.artist !== event.target.value;
-				});
-				articlesToHide.forEach(function (article) {
-					return article.classList.add('visually-hidden');
-				});
-				return;
-			}
-
 			articles.forEach(function (article) {
 				return article.classList.remove('visually-hidden');
+			});
+
+			if (event.target.value === '') return; // eslint-disable-line curly
+
+			var articlesToHide = articles.filter(function (article) {
+				return article.dataset.artist !== event.target.value;
+			});
+			articlesToHide.forEach(function (article) {
+				return article.classList.add('visually-hidden');
 			});
 		}
 	}]);
