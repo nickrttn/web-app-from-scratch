@@ -1,7 +1,11 @@
 /* eslint-env browser */
+import Render from './render';
 
-class Collection {
+class Collection extends Render {
 	constructor(app) {
+		// Initiate the parent class
+		super();
+
 		this.app = app;
 		this.collectionNode = this.app.sections.sections.find(section => section.id === 'collection');
 
@@ -13,34 +17,30 @@ class Collection {
 		);
 	}
 
+	/**
+	 * [render Renders all of the fetched collection artworks into the collection element at once.]
+	 * @param  {[Array]} collection [Array of artworks from the Rijksmuseum API]
+	 * @return {[Array]}            [The unchanged Array of artworks to be used in a chained .then() call.]
+	 */
 	render(collection) {
 		const placeholder = '/assets/images/placeholder.jpg';
 
 		// Insert all artworks into the collection section
-		this.renderTemplate(this.collectionNode, collection.reduce((allArt, artwork) => {
+		Collection.renderTemplate(this.collectionNode, collection.reduce((allArt, artwork) => {
+			const {longTitle, principalOrFirstMaker, headerImage, objectNumber, title} = artwork;
+
 			return allArt + `
-				<article>
-					<img class="blur" src="${placeholder}" alt="${artwork.longTitle}" data-guid="${artwork.headerImage.guid}" />
-					<h3><a href="#collection/${artwork.objectNumber.replace(/\./g, '')}">${artwork.title}</a></h3>
+				<article data-artist=${principalOrFirstMaker.replace(/\s/g, '')}>
+					<img class="blur" src="${placeholder}" alt="${longTitle}" data-guid="${headerImage.guid}" />
+					<div class="info">
+						<p>${principalOrFirstMaker}</p>
+						<h3>${title}</h3>
+					</div>
+					<a href="#collection/${objectNumber}"></a>
 				</article>`;
 		}, ''), 'beforeend');
 
 		return collection;
-	}
-
-	renderImages(data) {
-		data.forEach(object => {
-			// There are potentially multiple images with the same data-guid.
-			const images = document.querySelectorAll(`#collection [data-guid="${object.guid}"]`);
-			images.forEach(image => {
-				image.classList.remove('blur');
-				image.src = object.src;
-			});
-		});
-	}
-
-	renderTemplate(element, template, insert) {
-		element.insertAdjacentHTML(insert, template);
 	}
 }
 

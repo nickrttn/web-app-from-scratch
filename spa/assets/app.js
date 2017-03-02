@@ -3,5 +3,5 @@ import App from './modules/app';
 
 (() => {
 	'use strict';
-	const app = new App();
+	new App();
 })();

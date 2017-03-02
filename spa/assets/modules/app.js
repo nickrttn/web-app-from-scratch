@@ -4,6 +4,7 @@ import Request from './request';
 import Router from './router';
 import Sections from './sections';
 import Scroll from './scroll';
+import Filter from './filter';
 
 class App {
 	constructor() {
@@ -12,14 +13,13 @@ class App {
 		this.scroll = new Scroll(this);
 		this.collection = new Collection(this);
 		this.router = new Router(this);
-
-		// if (navigator.serviceWorker) {
-		// 	navigator.serviceWorker.register('../service-worker.js');
-		// }
+		this.filter = new Filter();
 	}
 
 	handleError(error) {
 		const body = document.querySelector('body');
+
+		console.error(error);
 
 		body.insertAdjacentHTML('afterbegin', `
 			<section class="error">

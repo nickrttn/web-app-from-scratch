@@ -15,6 +15,10 @@ class Sections {
 		this.sections.push(document.querySelector('#articles'));
 	}
 
+	find(id) {
+		return this.sections.find(section => section.id === id);
+	}
+
 	toggle(route, artwork) {
 		if (!route) return; // eslint-disable-line curly
 
@@ -36,6 +40,7 @@ class Sections {
 		const articlesSection = this.sections.find(section => section.id === 'articles');
 		const articles = articlesSection.querySelectorAll('article');
 
+		// Toggle the individual article
 		articles.forEach(article => article.dataset.object === artwork ?
 			article.classList.remove('visually-hidden') :
 			article.classList.add('visually-hidden')

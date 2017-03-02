@@ -6,6 +6,8 @@ var watchify = require('watchify');
 var exorcist = require('exorcist');
 var browserify = require('browserify');
 var browserSync = require('browser-sync').create();
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
 
 // Watchify args contains necessary cache options to achieve fast incremental bundles.
 // See watchify readme for details. Adding debug true for source-map generation.
@@ -25,15 +27,15 @@ function bundle() {
 	gutil.log('Compiling JS...');
 
 	return bundler.bundle()
-        .on('error', function (err) {
-	gutil.log(err.message);
-	browserSync.notify('Browserify Error!');
-	this.emit('end');
-})
-        .pipe(exorcist('./dist/bundle.js.map'))
-        .pipe(source('bundle.js'))
-        .pipe(gulp.dest('./dist'))
-        .pipe(browserSync.stream({once: true}));
+		.on('error', function (err) {
+			gutil.log(err.message);
+			browserSync.notify('Browserify Error!');
+			this.emit('end');
+		})
+		.pipe(exorcist('./dist/bundle.js.map'))
+		.pipe(source('bundle.js'))
+		.pipe(gulp.dest('./dist'))
+		.pipe(browserSync.stream({once: true}));
 }
 
 /**
@@ -43,11 +45,24 @@ gulp.task('bundle', function () {
 	return bundle();
 });
 
+gulp.task('prefix', function () {
+	var plugins = [
+		autoprefixer({browsers: ['last 2 versions']})
+	];
+
+	return gulp.src('./assets/style.css')
+		.pipe(postcss(plugins))
+		.pipe(gulp.dest('./dist'))
+		.pipe(browserSync.stream());
+});
+
 /**
  * First bundle, then serve from the ./app directory
  */
-gulp.task('default', ['bundle'], function () {
+gulp.task('default', ['bundle', 'prefix'], function () {
 	browserSync.init({
 		server: './'
 	});
+
+	gulp.watch('./assets/*.css', ['prefix']);
 });

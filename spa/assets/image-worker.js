@@ -2,6 +2,7 @@
 onmessage = event => {
 	if (Array.isArray(event.data)) {
 		const collection = event.data;
+
 		const fetches = collection.map(object => new Promise(resolve =>
 		fetch(object.headerImage.url)
 			.then(response => response.blob())
@@ -16,6 +17,7 @@ onmessage = event => {
 			.then(images => postMessage(images));
 	} else if (isObject(event.data)) {
 		const object = event.data.artObject;
+
 		fetch(object.webImage.url)
 			.then(response => response.blob())
 			.then(blob => postMessage({

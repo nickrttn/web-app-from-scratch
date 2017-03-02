@@ -10,7 +10,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 (function () {
 	'use strict';
 
-	var app = new _app2.default();
+	new _app2.default();
 })(); /* eslint-env browser */
 
 },{"./modules/app":2}],2:[function(require,module,exports){
@@ -43,6 +43,10 @@ var _scroll = require('./scroll');
 
 var _scroll2 = _interopRequireDefault(_scroll);
 
+var _filter = require('./filter');
+
+var _filter2 = _interopRequireDefault(_filter);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -56,16 +60,15 @@ var App = function () {
 		this.scroll = new _scroll2.default(this);
 		this.collection = new _collection2.default(this);
 		this.router = new _router2.default(this);
-
-		// if (navigator.serviceWorker) {
-		// 	navigator.serviceWorker.register('../service-worker.js');
-		// }
+		this.filter = new _filter2.default();
 	}
 
 	_createClass(App, [{
 		key: 'handleError',
 		value: function handleError(error) {
 			var body = document.querySelector('body');
+
+			console.error(error);
 
 			body.insertAdjacentHTML('afterbegin', '\n\t\t\t<section class="error">\n\t\t\t\t<h2>Oh no!</h2>\n\t\t\t\t<p>Something went slightly amiss. Please try to refresh.</p>\n\t\t\t\t<p>' + error + '</p>\n\t\t\t</section>\n\t\t');
 
@@ -84,7 +87,7 @@ var App = function () {
 
 exports.default = App;
 
-},{"./collection":4,"./request":5,"./router":6,"./scroll":7,"./sections":8}],3:[function(require,module,exports){
+},{"./collection":4,"./filter":5,"./request":7,"./router":8,"./scroll":9,"./sections":10}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -93,34 +96,68 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _render = require('./render');
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/* eslint-env browser */
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var Article = function () {
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint-env browser */
+
+
+var Article = function (_Render) {
+	_inherits(Article, _Render);
+
 	function Article() {
 		_classCallCheck(this, Article);
+
+		return _possibleConstructorReturn(this, (Article.__proto__ || Object.getPrototypeOf(Article)).apply(this, arguments));
 	}
 
 	_createClass(Article, null, [{
 		key: 'render',
 		value: function render(element, collection) {
+			var art = collection;
 			var placeholder = '/assets/images/placeholder.jpg';
 
-			var objects = collection;
+			if (Array.isArray(art)) {
+				art.forEach(function (artwork) {
+					artwork.objectNumber = artwork.objectNumber.replace(/\./g, '');
+				});
 
-			objects.forEach(function (artwork) {
-				artwork.objectNumber = artwork.objectNumber.replace(/\./g, '');
-			});
+				var articles = art.filter(function (artwork) {
+					return !document.querySelector('[data-object=' + artwork.objectNumber + ']');
+				});
 
-			var articles = objects.filter(function (artwork) {
-				return !document.querySelector('[data-object=' + artwork.objectNumber + ']');
-			});
+				// Insert an article tag after the collection section to render individual artwork in later.
+				this.renderTemplate(element, articles.reduce(function (allArt, artwork) {
+					var objectNumber = artwork.objectNumber,
+					    longTitle = artwork.longTitle,
+					    webImage = artwork.webImage,
+					    title = artwork.title,
+					    links = artwork.links;
 
-			// Insert an article tag after the collection section to render individual artwork in later.
-			this.renderTemplate(element, articles.reduce(function (allArt, artwork) {
-				return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + artwork.objectNumber + '">\n\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span> Back to collection</a>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.webImage.guid + '" />\n\t\t\t\t\t<h2>' + artwork.title + '</h2>\n\t\t\t</article>');
-			}, ''), 'beforeend');
+					return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span></a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.self + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>');
+				}, ''), 'beforeend');
+			} else if (Object.keys(art).find(function (key) {
+				return key === 'artObject';
+			})) {
+				var _art$artObject = art.artObject,
+				    objectNumber = _art$artObject.objectNumber,
+				    longTitle = _art$artObject.longTitle,
+				    webImage = _art$artObject.webImage,
+				    title = _art$artObject.title,
+				    links = _art$artObject.links;
+				// Insert an article tag after the collection section to render individual artwork in later.
+
+				this.renderTemplate(element, '\n\t\t\t\t<article data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close">&times;</a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.self + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>', 'beforeend');
+			}
 
 			return collection;
 		}
@@ -128,34 +165,181 @@ var Article = function () {
 		key: 'append',
 		value: function append(data) {
 			var object = data.artObject;
-			var article = document.querySelector('[data-object="' + object.objectNumber + '"]');
+			var page = data.artObjectPage;
+			var article = document.querySelector('[data-object="' + object.objectNumber + '"] .additional-information');
 
-			this.renderTemplate(article, '<p>' + (object.label.description || object.description) + '</p>', 'beforeend');
+			_get(Article.__proto__ || Object.getPrototypeOf(Article), 'renderTemplate', this).call(this, article, '\n\t\t\t\t<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">' + object.principalOrFirstMaker + '</span></p>\n\t\t\t\t<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">' + object.dating.year + '</span></p>\n\t\t\t\t<p>' + page.plaqueDescription + '</p>\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t', 'beforeend');
 
 			article.dataset.fetched = 'true';
 
 			return data;
 		}
-	}, {
-		key: 'replaceImage',
-		value: function replaceImage(data) {
-			var image = document.querySelector('#articles [data-guid="' + data.guid + '"]');
-			image.classList.remove('blur');
-			image.src = data.src;
-		}
-	}, {
-		key: 'renderTemplate',
-		value: function renderTemplate(element, template, insert) {
-			element.insertAdjacentHTML(insert, template);
-		}
 	}]);
 
 	return Article;
-}();
+}(_render2.default);
 
 exports.default = Article;
 
-},{}],4:[function(require,module,exports){
+},{"./render":6}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _render = require('./render');
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint-env browser */
+
+
+var Collection = function (_Render) {
+	_inherits(Collection, _Render);
+
+	function Collection(app) {
+		_classCallCheck(this, Collection);
+
+		var _this = _possibleConstructorReturn(this, (Collection.__proto__ || Object.getPrototypeOf(Collection)).call(this));
+		// Initiate the parent class
+
+
+		_this.app = app;
+		_this.collectionNode = _this.app.sections.sections.find(function (section) {
+			return section.id === 'collection';
+		});
+
+		_this.app.scroll.listen(_this.collectionNode, _this.app.request.fetchCollection, _this.collectionNode.getBoundingClientRect(), window.innerHeight / 2);
+		return _this;
+	}
+
+	/**
+  * [render Renders all of the fetched collection artworks into the collection element at once.]
+  * @param  {[Array]} collection [Array of artworks from the Rijksmuseum API]
+  * @return {[Array]}            [The unchanged Array of artworks to be used in a chained .then() call.]
+  */
+
+
+	_createClass(Collection, [{
+		key: 'render',
+		value: function render(collection) {
+			var placeholder = '/assets/images/placeholder.jpg';
+
+			// Insert all artworks into the collection section
+			Collection.renderTemplate(this.collectionNode, collection.reduce(function (allArt, artwork) {
+				var longTitle = artwork.longTitle,
+				    principalOrFirstMaker = artwork.principalOrFirstMaker,
+				    headerImage = artwork.headerImage,
+				    objectNumber = artwork.objectNumber,
+				    title = artwork.title;
+
+
+				return allArt + ('\n\t\t\t\t<article data-artist=' + principalOrFirstMaker.replace(/\s/g, '') + '>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + headerImage.guid + '" />\n\t\t\t\t\t<div class="info">\n\t\t\t\t\t\t<p>' + principalOrFirstMaker + '</p>\n\t\t\t\t\t\t<h3>' + title + '</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a href="#collection/' + objectNumber + '"></a>\n\t\t\t\t</article>');
+			}, ''), 'beforeend');
+
+			return collection;
+		}
+	}]);
+
+	return Collection;
+}(_render2.default);
+
+exports.default = Collection;
+
+},{"./render":6}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint-env browser */
+
+
+var _render = require('./render');
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Filter = function () {
+	function Filter() {
+		var _this = this;
+
+		_classCallCheck(this, Filter);
+
+		this.select = document.getElementById('maker');
+		this.artists = [];
+		this.select.addEventListener('change', function (event) {
+			return _this.apply(event);
+		});
+	}
+
+	_createClass(Filter, [{
+		key: 'add',
+		value: function add(data) {
+			// Get the artists from the data
+			var artistsToAdd = data.map(function (artwork) {
+				return artwork.principalOrFirstMaker;
+			});
+
+			// Concat the new artists to the existing array.
+			var newArtists = this.artists.concat(artistsToAdd);
+
+			// Filter the artists so they occur only once.
+			var uniqueArtists = newArtists.filter(function (artist, index, array) {
+				return array.indexOf(artist) === index;
+			});
+
+			this.artists = uniqueArtists;
+
+			_render2.default.renderTemplate(this.select, this.artists.reduce(function (list, current) {
+				var exists = Boolean(document.querySelector('[value="' + current + '"]'));
+				return list + (exists ? '' : '<option value="' + current.replace(/\s/g, '') + '">' + current + '</option>');
+			}, ''), 'beforeend');
+
+			return data;
+		}
+	}, {
+		key: 'apply',
+		value: function apply(event) {
+			var articles = Array.from(document.querySelectorAll('#collection article'));
+			if (event.target.value !== '') {
+				articles.forEach(function (article) {
+					return console.log(article.dataset);
+				});
+				var articlesToHide = articles.filter(function (article) {
+					return article.dataset.artist !== event.target.value;
+				});
+				articlesToHide.forEach(function (article) {
+					return article.classList.add('visually-hidden');
+				});
+				return;
+			}
+
+			articles.forEach(function (article) {
+				return article.classList.remove('visually-hidden');
+			});
+		}
+	}]);
+
+	return Filter;
+}();
+
+exports.default = Filter;
+
+},{"./render":6}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -168,55 +352,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* eslint-env browser */
 
-var Collection = function () {
-	function Collection(app) {
-		_classCallCheck(this, Collection);
-
-		this.app = app;
-		this.collectionNode = this.app.sections.sections.find(function (section) {
-			return section.id === 'collection';
-		});
-
-		this.app.scroll.listen(this.collectionNode, this.app.request.fetchCollection, this.collectionNode.getBoundingClientRect(), window.innerHeight / 2);
+/**
+ * Render has both a static and a non-static implementation of the renderTemplate method,
+ * because it is used by a static as well as an instantiated class.
+ */
+var Render = function () {
+	function Render() {
+		_classCallCheck(this, Render);
 	}
 
-	_createClass(Collection, [{
-		key: 'render',
-		value: function render(collection) {
-			var placeholder = '/assets/images/placeholder.jpg';
-
-			// Insert all artworks into the collection section
-			this.renderTemplate(this.collectionNode, collection.reduce(function (allArt, artwork) {
-				return allArt + ('\n\t\t\t\t<article>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + artwork.longTitle + '" data-guid="' + artwork.headerImage.guid + '" />\n\t\t\t\t\t<h3><a href="#collection/' + artwork.objectNumber.replace(/\./g, '') + '">' + artwork.title + '</a></h3>\n\t\t\t\t</article>');
-			}, ''), 'beforeend');
-
-			return collection;
-		}
-	}, {
-		key: 'renderImages',
-		value: function renderImages(data) {
-			data.forEach(function (object) {
-				// There are potentially multiple images with the same data-guid.
-				var images = document.querySelectorAll('#collection [data-guid="' + object.guid + '"]');
-				images.forEach(function (image) {
-					image.classList.remove('blur');
-					image.src = object.src;
-				});
-			});
-		}
-	}, {
+	_createClass(Render, null, [{
 		key: 'renderTemplate',
 		value: function renderTemplate(element, template, insert) {
 			element.insertAdjacentHTML(insert, template);
 		}
+	}, {
+		key: 'renderImages',
+		value: function renderImages(data, selector) {
+			if (Array.isArray(data)) {
+				data.forEach(function (object) {
+					return renderImage(object);
+				});
+			} else {
+				renderImage(data);
+			}
+
+			function renderImage(object) {
+				// There are potentially multiple images with the same data-guid.
+				var images = document.querySelectorAll('#' + selector + ' [data-guid="' + object.guid + '"]');
+				images.forEach(function (image) {
+					image.src = object.src;
+					image.classList.remove('blur');
+				});
+			}
+
+			return data;
+		}
 	}]);
 
-	return Collection;
+	return Render;
 }();
 
-exports.default = Collection;
+exports.default = Render;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -229,6 +408,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _article = require('./article');
 
 var _article2 = _interopRequireDefault(_article);
+
+var _render = require('./render');
+
+var _render2 = _interopRequireDefault(_render);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -259,6 +442,13 @@ var Request = function () {
 				return response.json();
 			});
 		}
+
+		/**
+   * [shouldFetchCollection This function is only called when we route to #collection.
+   * It checks if we have fetched API pages beyond the first and won't allow new pages to be fetched if we have.]
+   * @return {[type]} [description]
+   */
+
 	}, {
 		key: 'shouldFetchCollection',
 		value: function shouldFetchCollection() {
@@ -268,35 +458,45 @@ var Request = function () {
 		key: 'shouldFetchArtwork',
 		value: function shouldFetchArtwork(artwork) {
 			// Did we request this information before?
-			var article = document.querySelector('#articles [data-object="' + artwork.replace(/\./g, '') + '"]');
+			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
 
-			if (article && article.dataset.fetched === 'false') {
+			if (!article) {
 				this.fetchArtwork(artwork);
 				return;
 			}
 
+			if (article.dataset.fetched === 'false') {
+				this.fetchArtwork(artwork);
+			}
+
 			return;
 		}
+
+		/**
+   * [fetchCollection fetches and handles API data by sending it on to the collection and article classes.]
+   * @return {[type]} [description]
+   */
+
 	}, {
 		key: 'fetchCollection',
 		value: function fetchCollection() {
 			var _this = this;
 
 			if (this.fetching) return; // eslint-disable-line curly
-			var URL = this.baseURL + '?key=' + this.apikey + '&format=json&ps=10&p=' + this.page;
+			var URL = this.baseURL + '?key=' + this.apikey + '&format=json&ps=15&p=' + this.page;
 
 			this.get(URL).then(function (response) {
 				return _this.filterCollection(response);
 			}).then(function (result) {
 				return _this.app.collection.render(result);
 			}).then(function (data) {
-				return _article2.default.render(_this.app.sections.sections.find(function (section) {
-					return section.id === 'articles';
-				}), data);
+				return _article2.default.render(_this.app.sections.find('articles'), data);
+			}).then(function (arr) {
+				return _this.app.filter.add(arr);
 			}).then(function (collection) {
 				return _this.fetchImages(collection);
 			}).then(function (arr) {
-				return _this.app.collection.renderImages(arr);
+				return _render2.default.renderImages(arr, 'collection');
 			}).then(function () {
 				_this.fetching = false;
 			}) // eslint-disable-line brace-style
@@ -312,13 +512,17 @@ var Request = function () {
 		value: function fetchArtwork(artwork) {
 			var _this2 = this;
 
+			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
 			var URL = this.baseURL + '/' + artwork + '?key=' + this.apikey + '&format=json';
+
 			this.get(URL).then(function (data) {
+				return article ? data : _article2.default.render(_this2.app.sections.find('articles'), data);
+			}).then(function (data) {
 				return _article2.default.append(data);
 			}).then(function (data) {
 				return _this2.fetchImages(data);
 			}).then(function (image) {
-				return _article2.default.replaceImage(image);
+				return _render2.default.renderImages(image, 'articles');
 			}).then(function () {
 				_this2.fetching = false;
 			}) // eslint-disable-line brace-style
@@ -345,9 +549,16 @@ var Request = function () {
 		key: 'filterCollection',
 		value: function filterCollection(data) {
 			// Only display objects that have images as well as header images
-			return data.artObjects.filter(function (object) {
+			var filteredArtworks = data.artObjects.filter(function (object) {
 				return object.hasImage && object.headerImage && object.webImage;
 			});
+
+			// Remove any dots from the objectnumber as they mess with id-selectors
+			filteredArtworks.forEach(function (artwork) {
+				return artwork.objectNumber.replace(/\./g, '');
+			});
+
+			return filteredArtworks;
 		}
 	}]);
 
@@ -356,7 +567,7 @@ var Request = function () {
 
 exports.default = Request;
 
-},{"./article":3}],6:[function(require,module,exports){
+},{"./article":3,"./render":6}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -415,7 +626,7 @@ var Router = function () {
 
 exports.default = Router;
 
-},{"riot-route":22}],7:[function(require,module,exports){
+},{"riot-route":24}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -440,8 +651,8 @@ var Scroll = function () {
 		_classCallCheck(this, Scroll);
 
 		this.listen = this.listen.bind(this);
-		this.trigger = (0, _debounce3.default)(this.trigger.bind(this), 250, {
-			leading: false, trailing: true, maxWait: 250
+		this.trigger = (0, _debounce3.default)(this.trigger.bind(this), 1000, {
+			leading: true, trailing: false, maxWait: 1000
 		});
 	}
 
@@ -453,13 +664,17 @@ var Scroll = function () {
 			var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
 			element.addEventListener('wheel', function () {
-				_this.trigger(callback, element.getBoundingClientRect(), offset);
+				_this.trigger(callback, element, offset);
 			}, { passive: true });
 		}
 	}, {
 		key: 'trigger',
-		value: function trigger(callback, bounds, offset) {
-			if (bounds.bottom - window.innerWidth <= offset) {
+		value: function trigger(callback, element, offset) {
+			// We need to know how far the right side of the #collection is from the right side of the viewport.
+			// Calculate by subtracting the scroll position and the window width from the element width.
+			var scrollPosition = element.scrollWidth - element.offsetParent.scrollLeft - window.innerWidth;
+
+			if (scrollPosition <= offset) {
 				callback();
 			}
 		}
@@ -470,7 +685,7 @@ var Scroll = function () {
 
 exports.default = Scroll;
 
-},{"lodash/debounce":15}],8:[function(require,module,exports){
+},{"lodash/debounce":17}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -501,6 +716,13 @@ var Sections = function () {
 	}
 
 	_createClass(Sections, [{
+		key: 'find',
+		value: function find(id) {
+			return this.sections.find(function (section) {
+				return section.id === id;
+			});
+		}
+	}, {
 		key: 'toggle',
 		value: function toggle(route, artwork) {
 			if (!route) return; // eslint-disable-line curly
@@ -527,6 +749,7 @@ var Sections = function () {
 			});
 			var articles = articlesSection.querySelectorAll('article');
 
+			// Toggle the individual article
 			articles.forEach(function (article) {
 				return article.dataset.object === artwork ? article.classList.remove('visually-hidden') : article.classList.add('visually-hidden');
 			});
@@ -543,7 +766,7 @@ var Sections = function () {
 
 exports.default = Sections;
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var root = require('./_root');
 
 /** Built-in value references. */
@@ -551,7 +774,7 @@ var Symbol = root.Symbol;
 
 module.exports = Symbol;
 
-},{"./_root":14}],10:[function(require,module,exports){
+},{"./_root":16}],12:[function(require,module,exports){
 var Symbol = require('./_Symbol'),
     getRawTag = require('./_getRawTag'),
     objectToString = require('./_objectToString');
@@ -581,7 +804,7 @@ function baseGetTag(value) {
 
 module.exports = baseGetTag;
 
-},{"./_Symbol":9,"./_getRawTag":12,"./_objectToString":13}],11:[function(require,module,exports){
+},{"./_Symbol":11,"./_getRawTag":14,"./_objectToString":15}],13:[function(require,module,exports){
 (function (global){
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
@@ -590,7 +813,7 @@ module.exports = freeGlobal;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var Symbol = require('./_Symbol');
 
 /** Used for built-in method references. */
@@ -638,7 +861,7 @@ function getRawTag(value) {
 
 module.exports = getRawTag;
 
-},{"./_Symbol":9}],13:[function(require,module,exports){
+},{"./_Symbol":11}],15:[function(require,module,exports){
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -662,7 +885,7 @@ function objectToString(value) {
 
 module.exports = objectToString;
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var freeGlobal = require('./_freeGlobal');
 
 /** Detect free variable `self`. */
@@ -673,7 +896,7 @@ var root = freeGlobal || freeSelf || Function('return this')();
 
 module.exports = root;
 
-},{"./_freeGlobal":11}],15:[function(require,module,exports){
+},{"./_freeGlobal":13}],17:[function(require,module,exports){
 var isObject = require('./isObject'),
     now = require('./now'),
     toNumber = require('./toNumber');
@@ -863,7 +1086,7 @@ function debounce(func, wait, options) {
 
 module.exports = debounce;
 
-},{"./isObject":16,"./now":19,"./toNumber":20}],16:[function(require,module,exports){
+},{"./isObject":18,"./now":21,"./toNumber":22}],18:[function(require,module,exports){
 /**
  * Checks if `value` is the
  * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -896,7 +1119,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -927,7 +1150,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var baseGetTag = require('./_baseGetTag'),
     isObjectLike = require('./isObjectLike');
 
@@ -958,7 +1181,7 @@ function isSymbol(value) {
 
 module.exports = isSymbol;
 
-},{"./_baseGetTag":10,"./isObjectLike":17}],19:[function(require,module,exports){
+},{"./_baseGetTag":12,"./isObjectLike":19}],21:[function(require,module,exports){
 var root = require('./_root');
 
 /**
@@ -983,7 +1206,7 @@ var now = function() {
 
 module.exports = now;
 
-},{"./_root":14}],20:[function(require,module,exports){
+},{"./_root":16}],22:[function(require,module,exports){
 var isObject = require('./isObject'),
     isSymbol = require('./isSymbol');
 
@@ -1051,7 +1274,7 @@ function toNumber(value) {
 
 module.exports = toNumber;
 
-},{"./isObject":16,"./isSymbol":18}],21:[function(require,module,exports){
+},{"./isObject":18,"./isSymbol":20}],23:[function(require,module,exports){
 ;(function(window, undefined) {var observable = function(el) {
 
   /**
@@ -1185,7 +1408,7 @@ module.exports = toNumber;
     window.observable = observable
 
 })(typeof window != 'undefined' ? window : undefined);
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
@@ -1532,5 +1755,5 @@ route.parser();
 
 module.exports = route;
 
-},{"riot-observable":21}]},{},[1])
+},{"riot-observable":23}]},{},[1])
 //# sourceMappingURL=bundle.js.map

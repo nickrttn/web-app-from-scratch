@@ -4,24 +4,30 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Discover the Rijksmuseum</title>
-	<link rel="stylesheet" href="assets/style.css">
+	<link rel="stylesheet" href="dist/style.css">
 	<script src="dist/bundle.js" defer></script>
 </head>
 <body>
+	<menu>
+		<label for="maker">Filter by artist</label>
+		<select name="maker" id="maker">
+			<option selected value> --- No filter --- </option>
+		</select>
+	</menu>
+
 	<header id="home">
 		<h1>Hello.</h1>
+		<p>This web app exists to explore loads and loads of the Rijksmuseums' art very fast. It has a minimal interface and allows you to find things you like visually.</p>
+		<p><em>Scroll to the right.</em> <a href="#collection">Go to the collection.</a></p>
 	</header>
 
-	<section id="collection">
-		<h2>Art from the Rijksmuseum</h2>
-	</section>
-
+	<section id="collection"></section>
 	<section id="articles"></section>
 
 	<nav>
 		<ul>
 			<li><a href="#home" data-route="home">Home</a></li>
-			<li><a href="#collection" data-route="collection">Collection Rijksmuseum</a></li>
+			<li><a href="#collection" data-route="collection">Collection</a></li>
 		</ul>
 	</nav>
 </body>

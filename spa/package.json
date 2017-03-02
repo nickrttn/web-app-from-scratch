@@ -11,6 +11,7 @@
   "license": "MIT",
   "url": "git+https://github.com/nickrttn/web-app-from-scratch.git",
   "devDependencies": {
+    "autoprefixer": "^6.7.6",
     "babel-plugin-lodash": "^3.2.11",
     "babel-preset-env": "^1.1.8",
     "babelify": "^7.3.0",
@@ -18,6 +19,7 @@
     "browserify": "^14.0.0",
     "exorcist": "^0.4.0",
     "gulp": "^3.9.1",
+    "gulp-postcss": "^6.3.0",
     "gulp-sourcemaps": "^2.4.1",
     "gulp-util": "^3.0.8",
     "vinyl-source-stream": "^1.1.0",
