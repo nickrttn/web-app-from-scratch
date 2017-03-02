@@ -55,9 +55,9 @@ var App = function () {
 	function App() {
 		_classCallCheck(this, App);
 
-		this.sections = new _sections2.default(this);
+		this.sections = new _sections2.default();
 		this.request = new _request2.default(this);
-		this.scroll = new _scroll2.default(this);
+		this.scroll = new _scroll2.default();
 		this.collection = new _collection2.default(this);
 		this.router = new _router2.default(this);
 		this.filter = new _filter2.default();
@@ -694,10 +694,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* eslint-env browser */
 var Sections = function () {
-	function Sections(app) {
+	function Sections() {
 		_classCallCheck(this, Sections);
 
-		this.app = app;
 		this.sections = Array.from(document.querySelectorAll('nav a')).map(function (link) {
 			var route = link.dataset.route;
 			var element = document.getElementById(route);

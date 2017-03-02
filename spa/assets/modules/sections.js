@@ -1,7 +1,6 @@
 /* eslint-env browser */
 class Sections {
-	constructor(app) {
-		this.app = app;
+	constructor() {
 		this.sections = Array.from(document.querySelectorAll('nav a')).map(link => {
 			const route = link.dataset.route;
 			const element = document.getElementById(route);

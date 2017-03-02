@@ -8,9 +8,9 @@ import Filter from './filter';
 
 class App {
 	constructor() {
-		this.sections = new Sections(this);
+		this.sections = new Sections();
 		this.request = new Request(this);
-		this.scroll = new Scroll(this);
+		this.scroll = new Scroll();
 		this.collection = new Collection(this);
 		this.router = new Router(this);
 		this.filter = new Filter();
