@@ -16,7 +16,7 @@ This application is:
 
 ## Object Model
 
-![Object Model](./object-model.png)
+![Object Model](https://github.com/nickrttn/web-app-from-scratch/raw/master/spa/object-model.png)
 
 ## Wishlist
 
