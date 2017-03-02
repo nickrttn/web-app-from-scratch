@@ -647,8 +647,8 @@ var Scroll = function () {
 		_classCallCheck(this, Scroll);
 
 		this.listen = this.listen.bind(this);
-		this.trigger = (0, _debounce3.default)(this.trigger.bind(this), 500, {
-			leading: true, trailing: false, maxWait: 500
+		this.trigger = (0, _debounce3.default)(this.trigger.bind(this), 250, {
+			leading: true, trailing: false, maxWait: 250
 		});
 	}
 

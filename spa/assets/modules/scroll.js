@@ -4,8 +4,8 @@ import { debounce } from 'lodash'; // eslint-disable-line object-curly-spacing
 class Scroll {
 	constructor() {
 		this.listen = this.listen.bind(this);
-		this.trigger = debounce(this.trigger.bind(this), 500, {
-			leading: true, trailing: false, maxWait: 500
+		this.trigger = debounce(this.trigger.bind(this), 250, {
+			leading: true, trailing: false, maxWait: 250
 		});
 	}
 
