@@ -21,12 +21,13 @@ class Article extends Render {
 						<img class="blur" src="${placeholder}" alt="${longTitle}" data-guid="${webImage.guid}" />
 						<h2>${title}</h2>
 						<div class="additional-information">
-							<p class="external-link"><a href="${links.self}">View on the Rijksmuseum website.</a></p>
+							<p class="external-link"><a href="${links.web}">View on the Rijksmuseum website.</a></p>
 						</div>
 				</article>`;
 			}, ''), 'beforeend');
 		} else if (Object.keys(art).find(key => key === 'artObject')) {
 			const {objectNumber, longTitle, webImage, title, links} = art.artObject;
+			console.log(links);
 			// Insert an article tag after the collection section to render individual artwork in later.
 			this.renderTemplate(element, `
 				<article data-fetched="false" data-object="${objectNumber}">
@@ -34,7 +35,7 @@ class Article extends Render {
 						<img class="blur" src="${placeholder}" alt="${longTitle}" data-guid="${webImage.guid}" />
 						<h2>${title}</h2>
 						<div class="additional-information">
-							<p class="external-link"><a href="${links.self}">View on the Rijksmuseum website.</a></p>
+							<p class="external-link"><a href="${links.web}">View on the Rijksmuseum website.</a></p>
 						</div>
 				</article>`, 'beforeend');
 		}

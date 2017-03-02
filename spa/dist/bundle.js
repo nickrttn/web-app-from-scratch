@@ -143,7 +143,7 @@ var Article = function (_Render) {
 					    title = artwork.title,
 					    links = artwork.links;
 
-					return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span></a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.self + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>');
+					return allArt + ('<article class="visually-hidden" data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close"><span>&times;</span></a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.web + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>');
 				}, ''), 'beforeend');
 			} else if (Object.keys(art).find(function (key) {
 				return key === 'artObject';
@@ -154,9 +154,10 @@ var Article = function (_Render) {
 				    webImage = _art$artObject.webImage,
 				    title = _art$artObject.title,
 				    links = _art$artObject.links;
-				// Insert an article tag after the collection section to render individual artwork in later.
 
-				this.renderTemplate(element, '\n\t\t\t\t<article data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close">&times;</a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.self + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>', 'beforeend');
+				console.log(links);
+				// Insert an article tag after the collection section to render individual artwork in later.
+				this.renderTemplate(element, '\n\t\t\t\t<article data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close">&times;</a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.web + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>', 'beforeend');
 			}
 
 			return collection;
@@ -492,7 +493,7 @@ var Request = function () {
 			}).then(function (collection) {
 				return _this.fetchImages(collection);
 			}).then(function (arr) {
-				return _render2.default.renderImages(arr, 'collection');
+				return _article2.default.renderImages(arr, 'collection');
 			}).then(function () {
 				_this.fetching = false;
 			}) // eslint-disable-line brace-style
@@ -518,7 +519,7 @@ var Request = function () {
 			}).then(function (data) {
 				return _this2.fetchImages(data);
 			}).then(function (image) {
-				return _render2.default.renderImages(image, 'articles');
+				return _article2.default.renderImages(image, 'articles');
 			}).then(function () {
 				_this2.fetching = false;
 			}) // eslint-disable-line brace-style

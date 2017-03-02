@@ -61,7 +61,7 @@ class Request {
 			.then(data => Article.render(this.app.sections.find('articles'), data))
 			.then(arr => this.app.filter.add(arr))
 			.then(collection => this.fetchImages(collection))
-			.then(arr => Render.renderImages(arr, 'collection'))
+			.then(arr => Article.renderImages(arr, 'collection'))
 			.then(() => { this.fetching = false; }) // eslint-disable-line brace-style
 			.catch(err => this.app.handleError(err));
 
@@ -77,7 +77,7 @@ class Request {
 			.then(data => article ? data : Article.render(this.app.sections.find('articles'), data))
 			.then(data => Article.append(data))
 			.then(data => this.fetchImages(data))
-			.then(image => Render.renderImages(image, 'articles'))
+			.then(image => Article.renderImages(image, 'articles'))
 			.then(() => { this.fetching = false; }) // eslint-disable-line brace-style
 			.catch(err => this.app.handleError(err));
 	}

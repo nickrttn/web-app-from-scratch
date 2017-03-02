@@ -13,7 +13,10 @@ This application is:
 - Using ES6 string templating instead of a templating engine.
 - Using only 2 external libraries, a router and lodash.
 - Using static ES6 classes for things that do not need an instance, like a renderer.
--
+
+## Object Model
+
+![Object Model](./object-model.png)
 
 ## Wishlist
 
