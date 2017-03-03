@@ -154,9 +154,8 @@ var Article = function (_Render) {
 				    webImage = _art$artObject.webImage,
 				    title = _art$artObject.title,
 				    links = _art$artObject.links;
-
-				console.log(links);
 				// Insert an article tag after the collection section to render individual artwork in later.
+
 				this.renderTemplate(element, '\n\t\t\t\t<article data-fetched="false" data-object="' + objectNumber + '">\n\t\t\t\t\t\t<a href="#collection" class="close">&times;</a>\n\t\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + webImage.guid + '" />\n\t\t\t\t\t\t<h2>' + title + '</h2>\n\t\t\t\t\t\t<div class="additional-information">\n\t\t\t\t\t\t\t<p class="external-link"><a href="' + links.web + '">View on the Rijksmuseum website.</a></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t</article>', 'beforeend');
 			}
 
@@ -455,10 +454,10 @@ var Request = function () {
 		key: 'shouldFetchArtwork',
 		value: function shouldFetchArtwork(artwork) {
 			// Did we request this information before?
-			var article = Boolean(document.querySelector('#articles [data-object="' + artwork + '"]'));
+			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
 
-			if (!article || article.dataset.fetched === 'false') {
-				this.fetchArtwork(artwork, article);
+			if (!Boolean(article) || Boolean(article) && article.dataset.fetched === 'false') {
+				this.fetchArtwork(artwork, Boolean(article));
 			}
 
 			return;

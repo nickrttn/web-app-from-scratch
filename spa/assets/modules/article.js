@@ -27,7 +27,6 @@ class Article extends Render {
 			}, ''), 'beforeend');
 		} else if (Object.keys(art).find(key => key === 'artObject')) {
 			const {objectNumber, longTitle, webImage, title, links} = art.artObject;
-			console.log(links);
 			// Insert an article tag after the collection section to render individual artwork in later.
 			this.renderTemplate(element, `
 				<article data-fetched="false" data-object="${objectNumber}">

@@ -33,10 +33,10 @@ class Request {
 
 	shouldFetchArtwork(artwork) {
 		// Did we request this information before?
-		const article = Boolean(document.querySelector(`#articles [data-object="${artwork}"]`));
+		const article = document.querySelector(`#articles [data-object="${artwork}"]`);
 
-		if (!article || article.dataset.fetched === 'false') {
-			this.fetchArtwork(artwork, article);
+		if (!Boolean(article) || (Boolean(article) && article.dataset.fetched === 'false')) {
+			this.fetchArtwork(artwork, Boolean(article));
 		}
 
 		return;

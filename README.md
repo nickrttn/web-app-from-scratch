@@ -28,11 +28,19 @@ These flowcharts show the call stack that occurs when a user routes to certain p
 
 This is the root route. Navigating to it instantiates the application.
 
+![Root route](https://github.com/nickrttn/web-app-from-scratch/raw/master/spa/root.png)
+
 ### Route `/#collection`
 
 This is the collection route. Navigating to it first fetches 15 pieces of artwork from the Rijksmuseum API and then attaches a scroll handler to the `#collection` element to be able to fetch more.
 
+![Collection route](https://github.com/nickrttn/web-app-from-scratch/raw/master/spa/collection.png)
+
 ### Route `/#collection/{artwork}`
+
+This is the collection route. Navigating to it either fetches the entire article or only additional content and the image from the Rijksmuseum API, depending on whether the article was already fetched.
+
+![Detail route](https://github.com/nickrttn/web-app-from-scratch/raw/master/spa/detail.png)
 
 ## Wishlist
 
