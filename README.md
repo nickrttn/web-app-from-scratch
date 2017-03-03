@@ -16,7 +16,23 @@ This application is:
 
 ## Object Model
 
+This model shows the relation between classes in the application.
+
 ![Object Model](https://github.com/nickrttn/web-app-from-scratch/raw/master/spa/object-model.png)
+
+## Control Flows
+
+These flowcharts show the call stack that occurs when a user routes to certain pages.
+
+### Route `/`
+
+This is the root route. Navigating to it instantiates the application.
+
+### Route `/#collection`
+
+This is the collection route. Navigating to it first fetches 15 pieces of artwork from the Rijksmuseum API and then attaches a scroll handler to the `#collection` element to be able to fetch more.
+
+### Route `/#collection/{artwork}`
 
 ## Wishlist
 

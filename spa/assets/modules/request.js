@@ -35,12 +35,7 @@ class Request {
 		// Did we request this information before?
 		const article = document.querySelector(`#articles [data-object="${artwork}"]`);
 
-		if (!article) {
-			this.fetchArtwork(artwork);
-			return;
-		}
-
-		if (article.dataset.fetched === 'false') {
+		if (!article || article.dataset.fetched === 'false') {
 			this.fetchArtwork(artwork);
 		}
 

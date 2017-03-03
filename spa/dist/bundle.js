@@ -457,12 +457,7 @@ var Request = function () {
 			// Did we request this information before?
 			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
 
-			if (!article) {
-				this.fetchArtwork(artwork);
-				return;
-			}
-
-			if (article.dataset.fetched === 'false') {
+			if (!article || article.dataset.fetched === 'false') {
 				this.fetchArtwork(artwork);
 			}
 
@@ -660,7 +655,7 @@ var Scroll = function () {
 
 			var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
-			element.addEventListener('wheel', function () {
+			element.addEventListener('wheel', function (event) {
 				_this.trigger(callback, element, offset);
 			}, { passive: true });
 		}
