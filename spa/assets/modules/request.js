@@ -33,10 +33,10 @@ class Request {
 
 	shouldFetchArtwork(artwork) {
 		// Did we request this information before?
-		const article = document.querySelector(`#articles [data-object="${artwork}"]`);
+		const article = Boolean(document.querySelector(`#articles [data-object="${artwork}"]`));
 
 		if (!article || article.dataset.fetched === 'false') {
-			this.fetchArtwork(artwork);
+			this.fetchArtwork(artwork, article);
 		}
 
 		return;
@@ -64,8 +64,7 @@ class Request {
 		this.page += 1;
 	}
 
-	fetchArtwork(artwork) {
-		const article = document.querySelector(`#articles [data-object="${artwork}"]`);
+	fetchArtwork(artwork, article) {
 		const URL = `${this.baseURL}/${artwork}?key=${this.apikey}&format=json`;
 
 		this.get(URL)

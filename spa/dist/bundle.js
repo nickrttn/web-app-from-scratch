@@ -455,10 +455,10 @@ var Request = function () {
 		key: 'shouldFetchArtwork',
 		value: function shouldFetchArtwork(artwork) {
 			// Did we request this information before?
-			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
+			var article = Boolean(document.querySelector('#articles [data-object="' + artwork + '"]'));
 
 			if (!article || article.dataset.fetched === 'false') {
-				this.fetchArtwork(artwork);
+				this.fetchArtwork(artwork, article);
 			}
 
 			return;
@@ -501,10 +501,9 @@ var Request = function () {
 		}
 	}, {
 		key: 'fetchArtwork',
-		value: function fetchArtwork(artwork) {
+		value: function fetchArtwork(artwork, article) {
 			var _this2 = this;
 
-			var article = document.querySelector('#articles [data-object="' + artwork + '"]');
 			var URL = this.baseURL + '/' + artwork + '?key=' + this.apikey + '&format=json';
 
 			this.get(URL).then(function (data) {
