@@ -53,7 +53,7 @@ class Article extends Render {
 		super.renderTemplate(content, `
 				<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">${object.principalOrFirstMaker}</span></p>
 				<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">${object.dating.year}</span></p>
-				<p>${page.plaqueDescription}</p>
+				${page.plaqueDescription ? `<p>${page.plaqueDescription}</p>` : ''}
 				<p>${object.label.description || object.description}</p>
 		`, 'beforeend');
 

@@ -171,7 +171,7 @@ var Article = function (_Render) {
 
 			if (article.dataset.fetched === 'true') return; // eslint-disable-line curly
 
-			_get(Article.__proto__ || Object.getPrototypeOf(Article), 'renderTemplate', this).call(this, content, '\n\t\t\t\t<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">' + object.principalOrFirstMaker + '</span></p>\n\t\t\t\t<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">' + object.dating.year + '</span></p>\n\t\t\t\t<p>' + page.plaqueDescription + '</p>\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t', 'beforeend');
+			_get(Article.__proto__ || Object.getPrototypeOf(Article), 'renderTemplate', this).call(this, content, '\n\t\t\t\t<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">' + object.principalOrFirstMaker + '</span></p>\n\t\t\t\t<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">' + object.dating.year + '</span></p>\n\t\t\t\t' + (page.plaqueDescription ? '<p>' + page.plaqueDescription + '</p>' : '') + '\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t', 'beforeend');
 
 			article.dataset.fetched = 'true';
 
