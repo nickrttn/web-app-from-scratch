@@ -45,6 +45,7 @@ This is the collection route. Navigating to it either fetches the entire article
 ## Wishlist
 
 - Better performance.
+- Search by title.
 - Filters that work concurrently.
 - Sorting by year (this is a hard one as the year of production is only in detail page API requests).
 - Nicer design for the detail page.
