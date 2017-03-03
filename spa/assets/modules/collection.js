@@ -24,12 +24,17 @@ class Collection extends Render {
 	render(collection) {
 		const placeholder = '/assets/images/placeholder.jpg';
 
+		console.log(collection);
+
 		// Insert all artworks into the collection section
 		Collection.renderTemplate(this.collectionNode, collection.reduce((allArt, artwork) => {
-			const {longTitle, principalOrFirstMaker, headerImage, objectNumber, title} = artwork;
+			const {longTitle, principalOrFirstMaker, headerImage, objectNumber, title, productionPlaces} = artwork;
+
+			// Don't take multiple production places into account for filtering.
+			let place = productionPlaces[0];
 
 			return allArt + `
-				<article data-artist=${principalOrFirstMaker.replace(/\s/g, '')}>
+				<article data-artist=${principalOrFirstMaker.replace(/\s/g, '')} ${place ? `data-place="${place}"` : 'data-place="unknown"'}>
 					<img class="blur" src="${placeholder}" alt="${longTitle}" data-guid="${headerImage.guid}" />
 					<div class="info">
 						<p>${principalOrFirstMaker}</p>

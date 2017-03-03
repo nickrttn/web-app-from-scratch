@@ -88,6 +88,10 @@ a:visited {
 	color: gainsboro;
 }
 
+select {
+	margin-right: 3em;
+}
+
 header {
 	display: -ms-flexbox;
 	display: flex;

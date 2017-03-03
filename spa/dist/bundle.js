@@ -166,9 +166,12 @@ var Article = function (_Render) {
 		value: function append(data) {
 			var object = data.artObject;
 			var page = data.artObjectPage;
-			var article = document.querySelector('[data-object="' + object.objectNumber + '"] .additional-information');
+			var article = document.querySelector('[data-object="' + object.objectNumber + '"]');
+			var content = article.querySelector('.additional-information');
 
-			_get(Article.__proto__ || Object.getPrototypeOf(Article), 'renderTemplate', this).call(this, article, '\n\t\t\t\t<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">' + object.principalOrFirstMaker + '</span></p>\n\t\t\t\t<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">' + object.dating.year + '</span></p>\n\t\t\t\t<p>' + page.plaqueDescription + '</p>\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t', 'beforeend');
+			if (article.dataset.fetched === 'true') return; // eslint-disable-line curly
+
+			_get(Article.__proto__ || Object.getPrototypeOf(Article), 'renderTemplate', this).call(this, content, '\n\t\t\t\t<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">' + object.principalOrFirstMaker + '</span></p>\n\t\t\t\t<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">' + object.dating.year + '</span></p>\n\t\t\t\t<p>' + page.plaqueDescription + '</p>\n\t\t\t\t<p>' + (object.label.description || object.description) + '</p>\n\t\t', 'beforeend');
 
 			article.dataset.fetched = 'true';
 
@@ -234,16 +237,22 @@ var Collection = function (_Render) {
 		value: function render(collection) {
 			var placeholder = '/assets/images/placeholder.jpg';
 
+			console.log(collection);
+
 			// Insert all artworks into the collection section
 			Collection.renderTemplate(this.collectionNode, collection.reduce(function (allArt, artwork) {
 				var longTitle = artwork.longTitle,
 				    principalOrFirstMaker = artwork.principalOrFirstMaker,
 				    headerImage = artwork.headerImage,
 				    objectNumber = artwork.objectNumber,
-				    title = artwork.title;
+				    title = artwork.title,
+				    productionPlaces = artwork.productionPlaces;
 
+				// Don't take multiple production places into account for filtering.
 
-				return allArt + ('\n\t\t\t\t<article data-artist=' + principalOrFirstMaker.replace(/\s/g, '') + '>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + headerImage.guid + '" />\n\t\t\t\t\t<div class="info">\n\t\t\t\t\t\t<p>' + principalOrFirstMaker + '</p>\n\t\t\t\t\t\t<h3>' + title + '</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a href="#collection/' + objectNumber + '"></a>\n\t\t\t\t</article>');
+				var place = productionPlaces[0];
+
+				return allArt + ('\n\t\t\t\t<article data-artist=' + principalOrFirstMaker.replace(/\s/g, '') + ' ' + (place ? 'data-place="' + place + '"' : 'data-place="unknown"') + '>\n\t\t\t\t\t<img class="blur" src="' + placeholder + '" alt="' + longTitle + '" data-guid="' + headerImage.guid + '" />\n\t\t\t\t\t<div class="info">\n\t\t\t\t\t\t<p>' + principalOrFirstMaker + '</p>\n\t\t\t\t\t\t<h3>' + title + '</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<a href="#collection/' + objectNumber + '"></a>\n\t\t\t\t</article>');
 			}, ''), 'beforeend');
 
 			return collection;
@@ -271,6 +280,8 @@ var _render2 = _interopRequireDefault(_render);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Filter = function () {
@@ -279,9 +290,10 @@ var Filter = function () {
 
 		_classCallCheck(this, Filter);
 
-		this.select = document.getElementById('maker');
+		this.menu = document.querySelector('menu');
 		this.artists = [];
-		this.select.addEventListener('change', function (event) {
+		this.places = [];
+		this.menu.addEventListener('change', function (event) {
 			return _this.apply(event);
 		});
 	}
@@ -289,25 +301,21 @@ var Filter = function () {
 	_createClass(Filter, [{
 		key: 'add',
 		value: function add(data) {
-			// Get the artists from the data
-			var artistsToAdd = data.map(function (artwork) {
-				return artwork.principalOrFirstMaker;
+			var _this2 = this;
+
+			this.prepareData(data);
+
+			var filters = {
+				maker: this.artists,
+				place: this.places
+			};
+
+			Object.keys(filters).forEach(function (key) {
+				_render2.default.renderTemplate(_this2.menu.querySelector('#' + key), filters[key].reduce(function (list, current) {
+					var exists = Boolean(document.querySelector('[value="' + current + '"]'));
+					return list + (exists ? '' : '<option value="' + current.replace(/\s/g, '') + '">' + current + '</option>');
+				}, ''), 'beforeend');
 			});
-
-			// Concat the new artists to the existing array.
-			var newArtists = this.artists.concat(artistsToAdd);
-
-			// Filter the artists so they occur only once.
-			var uniqueArtists = newArtists.filter(function (artist, index, array) {
-				return array.indexOf(artist) === index;
-			});
-
-			this.artists = uniqueArtists;
-
-			_render2.default.renderTemplate(this.select, this.artists.reduce(function (list, current) {
-				var exists = Boolean(document.querySelector('[value="' + current + '"]'));
-				return list + (exists ? '' : '<option value="' + current.replace(/\s/g, '') + '">' + current + '</option>');
-			}, ''), 'beforeend');
 
 			return data;
 		}
@@ -322,10 +330,31 @@ var Filter = function () {
 			if (event.target.value === '') return; // eslint-disable-line curly
 
 			var articlesToHide = articles.filter(function (article) {
-				return article.dataset.artist !== event.target.value;
+				return article.dataset[event.target.id] !== event.target.value;
 			});
 			articlesToHide.forEach(function (article) {
 				return article.classList.add('visually-hidden');
+			});
+		}
+	}, {
+		key: 'prepareData',
+		value: function prepareData(data) {
+			var _this3 = this;
+
+			var filters = {
+				artists: data.map(function (artwork) {
+					return artwork.principalOrFirstMaker;
+				}),
+				places: data.map(function (artwork) {
+					return artwork.productionPlaces.length > 0 ? artwork.productionPlaces[0] : 'unknown';
+				})
+			};
+
+			Object.keys(filters).forEach(function (key) {
+				_this3[key] = [].concat(_toConsumableArray(_this3[key]), _toConsumableArray(filters[key]));
+				_this3[key] = _this3[key].filter(function (place, index, array) {
+					return array.indexOf(place) === index;
+				});
 			});
 		}
 	}]);

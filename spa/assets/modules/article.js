@@ -45,9 +45,12 @@ class Article extends Render {
 	static append(data) {
 		const object = data.artObject;
 		const page = data.artObjectPage;
-		const article = document.querySelector(`[data-object="${object.objectNumber}"] .additional-information`);
+		const article = document.querySelector(`[data-object="${object.objectNumber}"]`);
+		const content = article.querySelector('.additional-information');
 
-		super.renderTemplate(article, `
+		if (article.dataset.fetched === 'true') return; // eslint-disable-line curly
+
+		super.renderTemplate(content, `
 				<p class="meta"><span class="meta-label">Artist</span> <span class="meta-data">${object.principalOrFirstMaker}</span></p>
 				<p class="meta"><span class="meta-label">Year</span> <span class="meta-data">${object.dating.year}</span></p>
 				<p>${page.plaqueDescription}</p>

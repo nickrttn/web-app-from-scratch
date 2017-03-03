@@ -3,27 +3,26 @@ import Render from './render';
 
 class Filter {
 	constructor() {
-		this.select = document.getElementById('maker');
+		this.menu = document.querySelector('menu');
 		this.artists = [];
-		this.select.addEventListener('change', event => this.apply(event));
+		this.places = [];
+		this.menu.addEventListener('change', event => this.apply(event));
 	}
 
 	add(data) {
-		// Get the artists from the data
-		const artistsToAdd = data.map(artwork => artwork.principalOrFirstMaker);
+		this.prepareData(data);
 
-		// Concat the new artists to the existing array.
-		const newArtists = this.artists.concat(artistsToAdd);
+		const filters = {
+			maker: this.artists,
+			place: this.places
+		};
 
-		// Filter the artists so they occur only once.
-		const uniqueArtists = newArtists.filter((artist, index, array) => array.indexOf(artist) === index);
-
-		this.artists = uniqueArtists;
-
-		Render.renderTemplate(this.select, this.artists.reduce((list, current) => {
-			const exists = Boolean(document.querySelector(`[value="${current}"]`));
-			return list + (exists ? '' : `<option value="${current.replace(/\s/g, '')}">${current}</option>`);
-		}, ''), 'beforeend');
+		Object.keys(filters).forEach(key => {
+			Render.renderTemplate(this.menu.querySelector(`#${key}`), filters[key].reduce((list, current) => {
+				const exists = Boolean(document.querySelector(`[value="${current}"]`));
+				return list + (exists ? '' : `<option value="${current.replace(/\s/g, '')}">${current}</option>`);
+			}, ''), 'beforeend');
+		});
 
 		return data;
 	}
@@ -34,8 +33,20 @@ class Filter {
 
 		if (event.target.value === '') return; // eslint-disable-line curly
 
-		const articlesToHide = articles.filter(article => article.dataset.artist !== event.target.value);
+		const articlesToHide = articles.filter(article => article.dataset[event.target.id] !== event.target.value);
 		articlesToHide.forEach(article => article.classList.add('visually-hidden'));
+	}
+
+	prepareData(data) {
+		const filters = {
+			artists: data.map(artwork => artwork.principalOrFirstMaker),
+			places: data.map(artwork => artwork.productionPlaces.length > 0 ? artwork.productionPlaces[0] : 'unknown')
+		};
+
+		Object.keys(filters).forEach(key => {
+			this[key] = [...this[key], ...filters[key]];
+			this[key] = this[key].filter((place, index, array) => array.indexOf(place) === index);
+		});
 	}
 }
 
